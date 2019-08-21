@@ -1,0 +1,3 @@
+[submodule "Packages/UIWidgets"]
+	path = Packages/UIWidgets
+	url = https://github.com/UnityTech/UIWidgets.git
