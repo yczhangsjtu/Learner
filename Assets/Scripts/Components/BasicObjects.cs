@@ -14,17 +14,10 @@ namespace Components {
             this.child = child;
         }
 
-        public BasicMovieClipObject(string id, int layer, int index, Widget child) : base(id: id, layer: layer,
-            index: index) {
-            this.child = child;
-        }
-
         public readonly Widget child;
         public override object Clone() {
-            var ret = new BasicMovieClipObject(
-                this.id, this.layer, this.index, this.child
-            );
-            ret.position = this.position;
+            var ret = new BasicMovieClipObject(this.id, this.child);
+            ret.copyInternalFrom(this);
             return ret;
         }
 

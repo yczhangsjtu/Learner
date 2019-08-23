@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Components;
-using NUnit.Framework.Internal.Commands;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
@@ -69,7 +68,7 @@ public interface MovieClipProvider {
 }
 
 public class MovieClipData : MovieClipProvider {
-    private readonly List<MovieClipDataState> states = new List<MovieClipDataState>();
+    private readonly List<MovieClipSnapshot> snapshots = new List<MovieClipSnapshot>();
     private int lastFoundIndex = -1;
     private float lastQueriedTime = -1;
 
@@ -87,17 +86,17 @@ public class MovieClipData : MovieClipProvider {
 
     public Widget build(BuildContext context, float t) {
         D.assert(t >= 0.0f && t <= duration);
-        if (states.isEmpty()) {
+        if (snapshots.isEmpty()) {
             return new Container();
         }
 
-        int stateIndex = findStateIndex(t);
-        var state = states[stateIndex];
-        return state.build(context, t);
+        int snapshotIndex = findSnapshotIndex(t);
+        var snapshot = snapshots[snapshotIndex];
+        return snapshot.build(context, t);
     }
 
-    public int findStateIndex(float t) {
-        int startIndex = 0, endIndex = states.Count;
+    public int findSnapshotIndex(float t) {
+        int startIndex = 0, endIndex = snapshots.Count;
         if (lastFoundIndex >= 0) {
             if (lastQueriedTime <= t) {
                 startIndex = lastFoundIndex;
@@ -109,23 +108,23 @@ public class MovieClipData : MovieClipProvider {
 
         lastQueriedTime = t;
         for (int i = startIndex; i < endIndex; i++) {
-            if (states[i].timestamp > t) {
+            if (snapshots[i].timestamp > t) {
                 lastFoundIndex = i;
                 return lastFoundIndex;
             }
         }
 
-        lastFoundIndex = states.Count - 1;
+        lastFoundIndex = snapshots.Count - 1;
         return lastFoundIndex;
     }
 
     private void instantiateFrames(List<MovieClipDataFrame> frames) {
-        MovieClipDataState state = new MovieClipDataState(0);
-        states.Clear();
+        MovieClipSnapshot snapshot = new MovieClipSnapshot(0);
+        snapshots.Clear();
         _duration = 0;
         foreach (var frame in frames) {
-            state = frame.applyTo(state);
-            states.Add(state);
+            snapshot = frame.applyTo(snapshot);
+            snapshots.Add(snapshot);
             _duration += frame.duration;
         }
     }
@@ -134,8 +133,19 @@ public class MovieClipData : MovieClipProvider {
 
 public abstract class MovieClipObjectBuilder : ICloneable {
     public readonly string id;
-    public readonly int layer;
-    public readonly int index;
+
+    public int layer
+    {
+        get { return _layer; }
+    }
+
+    private int _layer;
+
+    public int index {
+        get { return _index; }
+    }
+
+    private int _index;
     private static int currentIndex = 0;
 
     public OffsetPropertyData position;
@@ -146,8 +156,8 @@ public abstract class MovieClipObjectBuilder : ICloneable {
         Offset position = null) {
         D.assert(id != null);
         this.id = id;
-        this.layer = layer;
-        this.index = currentIndex++;
+        this._layer = layer;
+        this._index = currentIndex++;
         if (position != null) {
             this.position = new ConstantOffsetProperty(position);
         }
@@ -156,24 +166,20 @@ public abstract class MovieClipObjectBuilder : ICloneable {
         }
     }
 
-    internal MovieClipObjectBuilder(
-        string id,
-        int layer,
-        int index
-    ) {
-        this.id = id;
-        this.layer = layer;
-        this.index = index;
-    }
-
     public abstract object Clone();
+
+    protected void copyInternalFrom(MovieClipObjectBuilder builder) {
+        _index = builder.index;
+        _layer = builder.layer;
+        this.position = builder.position;
+    }
 
     public abstract Widget build(BuildContext context, float t);
 }
 
-public delegate void MovieClipDataStateModifier(MovieClipDataState state);
+public delegate void MovieClipDataSnapshotModifier(MovieClipSnapshot snapshot);
 
-public class MovieClipDataState {
+public class MovieClipSnapshot {
     private readonly Dictionary<string, MovieClipObjectBuilder> objects =
         new Dictionary<string, MovieClipObjectBuilder>();
 
@@ -181,11 +187,11 @@ public class MovieClipDataState {
 
     private List<MovieClipObjectBuilder> sortedObjects;
 
-    public MovieClipDataState(float timestamp) {
+    public MovieClipSnapshot(float timestamp) {
         this.timestamp = timestamp;
     }
 
-    public MovieClipDataState(Dictionary<string, MovieClipObjectBuilder> objects, float timestamp) {
+    public MovieClipSnapshot(Dictionary<string, MovieClipObjectBuilder> objects, float timestamp) {
         this.objects = objects;
         this.timestamp = timestamp;
     }
@@ -233,16 +239,16 @@ public class MovieClipDataState {
         return true;
     }
 
-    public MovieClipDataState copyWith(MovieClipDataStateModifier modifier, float duration) {
-        var state = new MovieClipDataState(
+    public MovieClipSnapshot copyWith(MovieClipDataSnapshotModifier modifier, float duration) {
+        var snapshot = new MovieClipSnapshot(
             objects.ToDictionary(
                 entry => entry.Key,
                 entry => (MovieClipObjectBuilder) entry.Value.Clone()
             ),
             timestamp + duration
         );
-        modifier(state);
-        return state;
+        modifier(snapshot);
+        return snapshot;
     }
 
     public Widget build(BuildContext context, float t) {
@@ -269,7 +275,7 @@ public class MovieClipDataState {
 }
 
 public class MovieClipDataFrame {
-    public MovieClipDataFrame(float duration, MovieClipDataStateModifier modifier) {
+    public MovieClipDataFrame(float duration, MovieClipDataSnapshotModifier modifier) {
         D.assert(duration > 0);
         this.modifier = modifier;
         this.duration = duration;
@@ -277,9 +283,9 @@ public class MovieClipDataFrame {
 
     public readonly float duration;
 
-    public readonly MovieClipDataStateModifier modifier;
+    public readonly MovieClipDataSnapshotModifier modifier;
 
-    public MovieClipDataState applyTo(MovieClipDataState state) {
-        return state.copyWith(modifier, duration);
+    public MovieClipSnapshot applyTo(MovieClipSnapshot snapshot) {
+        return snapshot.copyWith(modifier, duration);
     }
 }
