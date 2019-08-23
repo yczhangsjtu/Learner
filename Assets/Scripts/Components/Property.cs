@@ -3,24 +3,26 @@ using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
 
 namespace Components {
-    public interface Property {}
-    
+    public interface Property { }
+
     public abstract class Property<T> : Tween<T>, Property {
         public readonly float duration;
-        public readonly float endTime;
-
         public readonly float startTime;
+        public readonly float endTime;
+        public readonly Curve curve;
 
         public Property(
             T begin,
             T end,
             float startTime,
-            float endTime
+            float endTime,
+            Curve curve = null
         ) : base(begin, end) {
             D.assert(startTime < endTime);
             D.assert(startTime >= 0.0f);
             this.startTime = startTime;
             this.endTime = endTime;
+            this.curve = curve;
             duration = endTime - startTime;
         }
 
@@ -29,13 +31,19 @@ namespace Components {
 
             if (t >= endTime) return end;
 
-            return lerp((t - startTime) / duration);
+            t = (t - startTime) / duration;
+
+            if (curve != null) {
+                t = curve.transform(t);
+            }
+
+            return lerp(t);
         }
     }
 
     public class ColorProperty : Property<Color> {
-        public ColorProperty(float startTime, float endTime, Color begin, Color end) : base(
-            startTime: startTime, endTime: endTime, begin: begin, end: end) { }
+        public ColorProperty(float startTime, float endTime, Color begin, Color end, Curve curve = null) : base(
+            startTime: startTime, endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override Color lerp(float t) {
             return Color.lerp(begin, end, t);
@@ -43,8 +51,8 @@ namespace Components {
     }
 
     public class SizeProperty : Property<Size> {
-        public SizeProperty(float startTime, float endTime, Size begin, Size end) : base(
-            startTime: startTime, endTime: endTime, begin: begin, end: end) { }
+        public SizeProperty(float startTime, float endTime, Size begin, Size end, Curve curve = null) : base(
+            startTime: startTime, endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override Size lerp(float t) {
             return Size.lerp(begin, end, t);
@@ -52,8 +60,8 @@ namespace Components {
     }
 
     public class RectProperty : Property<Rect> {
-        public RectProperty(float startTime, float endTime, Rect begin, Rect end) : base(
-            startTime: startTime, endTime: endTime, begin: begin, end: end) { }
+        public RectProperty(float startTime, float endTime, Rect begin, Rect end, Curve curve = null) : base(
+            startTime: startTime, endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override Rect lerp(float t) {
             return Rect.lerp(begin, end, t);
@@ -61,8 +69,9 @@ namespace Components {
     }
 
     public class IntProperty : Property<int> {
-        public IntProperty(float startTime, float endTime, int begin, int end) : base(startTime: startTime,
-            endTime: endTime, begin: begin, end: end) { }
+        public IntProperty(float startTime, float endTime, int begin, int end, Curve curve = null) : base(
+            startTime: startTime,
+            endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override int lerp(float t) {
             return (begin + (end - begin) * t).round();
@@ -70,8 +79,8 @@ namespace Components {
     }
 
     public class NullableFloatProperty : Property<float?> {
-        public NullableFloatProperty(float startTime, float endTime, float? begin, float? end) : base(
-            startTime: startTime, endTime: endTime, begin: begin, end: end) { }
+        public NullableFloatProperty(float startTime, float endTime, float? begin, float? end, Curve curve = null) :
+            base(startTime: startTime, endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override float? lerp(float t) {
             D.assert(begin != null);
@@ -81,8 +90,9 @@ namespace Components {
     }
 
     public class FloatProperty : Property<float> {
-        public FloatProperty(float startTime, float endTime, float begin, float end) : base(startTime: startTime,
-            endTime: endTime, begin: begin, end: end) { }
+        public FloatProperty(float startTime, float endTime, float begin, float end, Curve curve = null) : base(
+            startTime: startTime,
+            endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override float lerp(float t) {
             return begin + (end - begin) * t;
@@ -90,8 +100,9 @@ namespace Components {
     }
 
     public class StepProperty : Property<int> {
-        public StepProperty(float startTime, float endTime, int begin, int end) : base(startTime: startTime,
-            endTime: endTime, begin: begin, end: end) { }
+        public StepProperty(float startTime, float endTime, int begin, int end, Curve curve = null) : base(
+            startTime: startTime,
+            endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override int lerp(float t) {
             return (begin + (end - begin) * t).floor();
@@ -99,8 +110,9 @@ namespace Components {
     }
 
     public class OffsetProperty : Property<Offset> {
-        public OffsetProperty(float startTime, float endTime, Offset begin, Offset end) : base(startTime: startTime,
-            endTime: endTime, begin: begin, end: end) { }
+        public OffsetProperty(float startTime, float endTime, Offset begin, Offset end, Curve curve = null) : base(
+            startTime: startTime,
+            endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override Offset lerp(float t) {
             return begin + (end - begin) * t;
@@ -108,8 +120,8 @@ namespace Components {
     }
 
     internal class ConstantProperty<T> : Property<T> {
-        public ConstantProperty(float startTime, float endTime, T value) : base(startTime: startTime, endTime: endTime,
-            begin: value, end: value) { }
+        public ConstantProperty(float startTime, float endTime, T value) : base(
+            startTime: startTime, endTime: endTime, begin: value, end: value) { }
 
         public override T lerp(float t) {
             return begin;
