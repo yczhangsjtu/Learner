@@ -88,6 +88,7 @@ public class MovieClipData : MovieClipProvider {
     }
 }
 
+
 public abstract class MovieClipObjectBuilder {
     public MovieClipObjectBuilder(string id) {
         D.assert(id != null);
@@ -97,10 +98,6 @@ public abstract class MovieClipObjectBuilder {
     public readonly string id;
     
     public abstract Widget build(BuildContext context);
-
-    public void changeProperty() {
-        
-    }
 }
 
 public class MovieClipDataState {
