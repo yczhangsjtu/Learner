@@ -109,7 +109,12 @@ namespace Components {
         }
     }
 
-    public class OffsetProperty : Property<Offset> {
+    public interface OffsetPropertyData {
+        Offset lerp(float t);
+        Offset evaluate(float t);
+    }
+
+    public class OffsetProperty : Property<Offset>, OffsetPropertyData {
         public OffsetProperty(float startTime, float endTime, Offset begin, Offset end, Curve curve = null) : base(
             startTime: startTime,
             endTime: endTime, begin: begin, end: end, curve: curve) { }
@@ -119,9 +124,8 @@ namespace Components {
         }
     }
 
-    internal class ConstantProperty<T> : Property<T> {
-        public ConstantProperty(float startTime, float endTime, T value) : base(
-            startTime: startTime, endTime: endTime, begin: value, end: value) { }
+    public class ConstantProperty<T> : Property<T> {
+        public ConstantProperty(T value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
 
         public override T lerp(float t) {
             return begin;
@@ -130,5 +134,9 @@ namespace Components {
         public override string ToString() {
             return $"{GetType()}(value: {begin})";
         }
+    }
+
+    public class ConstantOffsetProperty : ConstantProperty<Offset>, OffsetPropertyData {
+        public ConstantOffsetProperty(Offset value) : base(value) {}
     }
 }
