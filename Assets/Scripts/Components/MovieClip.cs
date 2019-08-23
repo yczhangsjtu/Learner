@@ -140,7 +140,10 @@ public abstract class MovieClipObjectBuilder : ICloneable {
 
     public OffsetPropertyData position;
 
-    public MovieClipObjectBuilder(string id, int layer = 0, Offset position = null) {
+    public MovieClipObjectBuilder(
+        string id,
+        int layer = 0,
+        Offset position = null) {
         D.assert(id != null);
         this.id = id;
         this.layer = layer;
@@ -151,6 +154,16 @@ public abstract class MovieClipObjectBuilder : ICloneable {
         else {
             this.position = new ConstantOffsetProperty(Offset.zero);
         }
+    }
+
+    internal MovieClipObjectBuilder(
+        string id,
+        int layer,
+        int index
+    ) {
+        this.id = id;
+        this.layer = layer;
+        this.index = index;
     }
 
     public abstract object Clone();
