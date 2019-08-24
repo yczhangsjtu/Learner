@@ -24,39 +24,51 @@ namespace Components {
         public PropertyData<Offset> position;
         public PropertyData<Size> scale;
         public PropertyData<float> rotation;
+        public PropertyData<float> opacity;
         public float? deathTime = null;
         public static Size originalSize = new Size(1, 1);
 
-        public MovieClipObject(
+        protected MovieClipObject(
             string id,
             int layer = 0,
             Offset position = null,
             Size scale = null,
-            float? rotation = null) {
+            float rotation = 0,
+            float opacity = 1) {
             D.assert(id != null);
             this.id = id;
             _layer = layer;
             _index = currentIndex++;
+            initConstantPosition(position);
+            initConstantScale(scale);
+            initConstantRotation(rotation);
+            initConstantOpacity(opacity);
+        }
+
+        public void initConstantPosition(Offset position) {
             if (position != null) {
                 this.position = new ConstantOffsetProperty(position);
             }
             else {
                 this.position = new ConstantOffsetProperty(Offset.zero);
             }
+        }
 
+        public void initConstantScale(Size scale) {
             if (scale != null) {
                 this.scale = new ConstantSizeProperty(scale);
             }
             else {
                 this.scale = new ConstantSizeProperty(originalSize);
             }
+        }
 
-            if (rotation != null) {
-                this.rotation = new ConstantFloatProperty(rotation.Value);
-            }
-            else {
-                this.rotation = new ConstantFloatProperty(0);
-            }
+        public void initConstantRotation(float rotation) {
+            this.rotation = new ConstantFloatProperty(rotation);
+        }
+
+        public void initConstantOpacity(float opacity) {
+            this.opacity = new ConstantFloatProperty(opacity);
         }
 
         public void moveTo(Offset position, float startTime, float duration, Offset fromPosition = null, Curve curve = null) {
@@ -67,6 +79,11 @@ namespace Components {
                 end: position,
                 curve: curve
             );
+        }
+
+        public void move(Offset offset, float startTime, float duration, Curve curve = null) {
+            var fromPosition = position.evaluate(startTime);
+            moveTo(fromPosition + offset, startTime, duration, fromPosition, curve);
         }
 
         public void rotateTo(float rotation, float startTime, float duration, float? fromRotation = null, Curve curve = null) {
@@ -89,6 +106,16 @@ namespace Components {
             );
         }
 
+        public void opacityTo(float opacity, float startTime, float duration, float? fromOpacity, Curve curve = null) {
+            this.opacity = new FloatProperty(
+                startTime: startTime,
+                endTime: startTime + duration,
+                begin: fromOpacity ?? this.opacity.evaluate(startTime),
+                end: opacity,
+                curve: curve
+            );
+        }
+
         public void dieAt(float t) {
             this.deathTime = t;
         }
@@ -107,14 +134,11 @@ namespace Components {
     }
 
     public class BasicMovieClipObject : MovieClipObject {
-        public BasicMovieClipObject(
+        internal BasicMovieClipObject(
             string id,
             Widget child,
-            int layer = 0,
-            Offset position = null)
-            : base(id: id,
-                layer: layer,
-                position: position) {
+            int layer = 0)
+            : base(id: id, layer: layer) {
             this.child = child;
         }
 

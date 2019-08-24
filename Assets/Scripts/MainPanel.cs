@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.engine;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
-using Unity.UIWidgets.painting;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
 using Components;
@@ -42,28 +39,41 @@ public class MainPanel : UIWidgetsPanel
                     movieClipData: new MovieClipData(
                         new List<MovieClipDataFrame>{
                             new MovieClipDataFrame(
-                                1, snapshot => {
+                                0.5f, snapshot => {
                                     var obj = new BasicMovieClipObject(
-                                        "rect",
-                                        child: new Text("Hello World", style: new TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 32
-                                        ))
+                                        "text",
+                                        child: new Text("Hello World")
                                     );
-                                    snapshot.addObject("rect", obj);
-                                    obj.moveTo(new Offset(100, 100), 0, 1);
+                                    snapshot.createObject(obj,
+                                        position: new Offset(100, 100),
+                                        animation: AppearAnimation.fadeIn);
                                 }
                             ),
                             new MovieClipDataFrame(
                                 2, snapshot => {
-                                    var obj = snapshot.getObject("rect");
-                                    obj?.scaleTo(new Size(2, 2), 2, 2);
+                                    var obj = snapshot.getObject("text");
+                                    obj.move(new Offset(100, 0), snapshot.timestamp, 1);
+                                    obj?.scaleTo(new Size(2, 2), snapshot.timestamp, 2);
                                 }
                             ),
                             new MovieClipDataFrame(
                                 2, snapshot => {
-                                    var obj = snapshot.getObject("rect");
-                                    obj?.rotateTo(2 * Mathf.PI, 3, 2);
+                                    var obj = snapshot.getObject("text");
+                                    obj.move(new Offset(0, 100), snapshot.timestamp, 1);
+                                    obj?.rotateTo(2 * Mathf.PI, snapshot.timestamp, 2);
+                                    snapshot.createObject(new BasicMovieClipObject(
+                                            "rect",
+                                            child: new Container(
+                                                color: Colors.blue,
+                                                child: new SizedBox(
+                                                    width: 50,
+                                                    height: 50
+                                                )
+                                            )
+                                        ),
+                                        position: new Offset(100, 100),
+                                        animation: AppearAnimation.overScale
+                                    );
                                 }
                             ),
                         }
