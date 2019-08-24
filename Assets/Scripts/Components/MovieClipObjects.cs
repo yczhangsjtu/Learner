@@ -22,6 +22,7 @@ namespace Components {
         private static int currentIndex = 0;
 
         public PropertyData<Offset> position;
+        public PropertyData<Offset> pivot;
         public PropertyData<Size> scale;
         public PropertyData<float> rotation;
         public PropertyData<float> opacity;
@@ -34,12 +35,14 @@ namespace Components {
             Offset position = null,
             Size scale = null,
             float rotation = 0,
+            Offset pivot = null,
             float opacity = 1) {
             D.assert(id != null);
             this.id = id;
             _layer = layer;
             _index = currentIndex++;
             initConstantPosition(position);
+            initConstantPivot(pivot);
             initConstantScale(scale);
             initConstantRotation(rotation);
             initConstantOpacity(opacity);
@@ -51,6 +54,15 @@ namespace Components {
             }
             else {
                 this.position = new ConstantOffsetProperty(Offset.zero);
+            }
+        }
+        
+        public void initConstantPivot(Offset pivot) {
+            if (pivot != null) {
+                this.pivot = new ConstantOffsetProperty(pivot);
+            }
+            else {
+                this.pivot = new ConstantOffsetProperty(new Offset(0.5f, 0.5f));
             }
         }
 
@@ -85,6 +97,21 @@ namespace Components {
             var fromPosition = position.evaluate(startTime);
             moveTo(fromPosition + offset, startTime, duration, fromPosition, curve);
         }
+        
+        public void pivotTo(Offset pivot, float startTime, float duration, Offset fromPosition = null, Curve curve = null) {
+            this.pivot = new OffsetProperty(
+                startTime: startTime,
+                endTime: startTime + duration,
+                begin: fromPosition ?? this.pivot.evaluate(startTime),
+                end: pivot,
+                curve: curve
+            );
+        }
+
+        public void pivotChangeBy(Offset offset, float startTime, float duration, Curve curve = null) {
+            var fromPivot = pivot.evaluate(startTime);
+            pivotTo(fromPivot + offset, startTime, duration, fromPivot, curve);
+        }
 
         public void rotateTo(float rotation, float startTime, float duration, float? fromRotation = null, Curve curve = null) {
             this.rotation = new FloatProperty(
@@ -94,6 +121,11 @@ namespace Components {
                 end: rotation,
                 curve: curve
             );
+        }
+
+        public void rotateBy(float rotation, float startTime, float duration, Curve curve = null) {
+            var fromRotation = this.rotation.evaluate(startTime);
+            rotateTo(fromRotation + rotation, startTime, duration, fromRotation, curve);
         }
 
         public void scaleTo(Size scale, float startTime, float duration, Size fromScale = null, Curve curve = null) {
@@ -106,6 +138,12 @@ namespace Components {
             );
         }
 
+        public void scaleBy(Size scale, float startTime, float duration, Curve curve = null) {
+            var fromScale = this.scale.evaluate(startTime);
+            scaleTo(new Size(fromScale.width * scale.width, fromScale.width * scale.height),
+                startTime, duration, fromScale, curve);
+        }
+
         public void opacityTo(float opacity, float startTime, float duration, float? fromOpacity, Curve curve = null) {
             this.opacity = new FloatProperty(
                 startTime: startTime,
@@ -114,6 +152,11 @@ namespace Components {
                 end: opacity,
                 curve: curve
             );
+        }
+
+        public void opacityChangeBy(float delta, float startTime, float duration, Curve curve = null) {
+            var fromOpacity = opacity.evaluate(startTime);
+            opacityTo((fromOpacity + delta).clamp(0.0f, 1.0f), startTime, duration, fromOpacity, curve);
         }
 
         public void dieAt(float t) {

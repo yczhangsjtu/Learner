@@ -257,6 +257,7 @@ namespace Components {
             return new Stack(
                 children: sortedObjects.Select<MovieClipObject, Widget>((obj) => {
                     Offset position = obj.position.evaluate(t);
+                    Offset pivot = obj.pivot.evaluate(t);
                     Size scale = obj.scale.evaluate(t);
                     float rotation = obj.rotation.evaluate(t);
                     float opacity = obj.opacity.evaluate(t);
@@ -265,7 +266,10 @@ namespace Components {
                     return new Positioned(
                         child: new Transform(
                             child: new Opacity(
-                                child: obj.build(context, t),
+                                child: new FractionalTranslation(
+                                    translation: -pivot,
+                                    child: obj.build(context, t)
+                                ),
                                 opacity: opacity
                             ),
                             transform: transform
