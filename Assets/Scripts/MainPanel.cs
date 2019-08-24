@@ -41,9 +41,7 @@ public class MainPanel : UIWidgetsPanel
                         new List<MovieClipDataFrame>{
                             new MovieClipDataFrame(
                                 0.5f, snapshot => {
-                                    snapshot.createObject(new MovieClipTextObject(
-                                            "text", "Hello World"
-                                        ),
+                                    snapshot.createTextObject("text", "Hello World",
                                         position: new Offset(300, 100),
                                         animation: AppearAnimation.fadeIn);
                                 }

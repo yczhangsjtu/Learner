@@ -279,4 +279,27 @@ namespace Components {
             );
         }
     }
+
+    public static class MovieClipUtils {
+        public static void createTextObject(
+            this MovieClipSnapshot snapshot,
+            string id, string text,
+            TextStyle style = null,
+            AppearAnimation animation = AppearAnimation.none,
+            int layer = 0,
+            Offset position = null,
+            Size scale = null,
+            float rotation = 0,
+            Offset pivot = null,
+            float opacity = 1) {
+            snapshot.createObject(new MovieClipTextObject(
+                    id, text, style, layer: layer),
+                    position: position,
+                    scale: scale,
+                    rotation: rotation,
+                    pivot: pivot,
+                    opacity: opacity,
+                animation: animation);
+        }
+    }
 }
