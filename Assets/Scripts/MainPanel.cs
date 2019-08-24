@@ -76,6 +76,13 @@ public class MainPanel : UIWidgetsPanel
                                     );
                                 }
                             ),
+                            new MovieClipDataFrame(
+                                2, snapshot => {
+                                    snapshot.destroyObject("text", animation: DisappearAnimation.overScale);
+                                    var obj = snapshot.getObject("rect");
+                                    obj.move(new Offset(200, 0), snapshot.timestamp, 2);
+                                }
+                            ),
                         }
                     )
                 )

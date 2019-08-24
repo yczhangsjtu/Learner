@@ -90,6 +90,17 @@ namespace Components {
         fromTop,
         fromBottom,
     }
+    
+    public enum DisappearAnimation {
+        none,
+        fadeOut,
+        scale,
+        overScale,
+        toLeft,
+        toRight,
+        toTop,
+        toBottom,
+    }
 
     public class MovieClipSnapshot {
         private readonly Dictionary<string, MovieClipObject> objects =
@@ -105,6 +116,8 @@ namespace Components {
 
         public const float kDefaultAppearTime = 0.3f;
         public const float kDefaultAppearDistance = 1000;
+        public const float kDefaultDisappearTime = 0.3f;
+        public const float kDefaultDisappearDistance = 1000;
 
         public MovieClipSnapshot(float timestamp) {
             this._timestamp = timestamp;
@@ -142,57 +155,62 @@ namespace Components {
         public bool createObject(
             MovieClipObject obj,
             Offset position = null,
+            Offset pivot = null,
             Size scale = null,
             float rotation = 0,
             float opacity = 1,
+            float delay = 0,
             AppearAnimation animation = AppearAnimation.none,
             float appearTime = kDefaultAppearTime) {
             if (!addObject(obj)) return false;
 
-            obj.initConstantPosition(position);
-            obj.initConstantScale(scale);
-            obj.initConstantRotation(rotation);
+            obj.initConstants(
+                position: position,
+                pivot: pivot,
+                scale: scale,
+                rotation: rotation,
+                opacity: opacity);
             var targetPosition = position ?? Offset.zero;
             switch (animation) {
                 case AppearAnimation.none:
                     break;
                 case AppearAnimation.fadeIn:
-                    obj.opacityTo(opacity, timestamp, appearTime, 0);
+                    obj.opacityTo(opacity, timestamp + delay, appearTime, 0);
                     break;
                 case AppearAnimation.scale:
                     obj.scaleTo(scale ?? new Size(1, 1),
-                        timestamp,
+                        timestamp + delay,
                         appearTime,
                         new Size(0, 0));
                     break;
                 case AppearAnimation.overScale:
                     obj.scaleTo(scale ?? new Size(1, 1),
-                        timestamp,
+                        timestamp + delay,
                         appearTime,
                         new Size(0, 0),
                         Curves.easeOutBack);
                     break;
                 case AppearAnimation.fromTop:
                     obj.moveTo(targetPosition,
-                        timestamp,
+                        timestamp + delay,
                         appearTime,
                         targetPosition - new Offset(0, kDefaultAppearDistance));
                     break;
                 case AppearAnimation.fromBottom:
                     obj.moveTo(targetPosition,
-                        timestamp,
+                        timestamp + delay,
                         appearTime,
                         targetPosition + new Offset(0, kDefaultAppearDistance));
                     break;
                 case AppearAnimation.fromLeft:
                     obj.moveTo(targetPosition,
-                        timestamp,
+                        timestamp + delay,
                         appearTime,
                         targetPosition - new Offset(kDefaultAppearDistance, 0));
                     break;
                 case AppearAnimation.fromRight:
                     obj.moveTo(targetPosition,
-                        timestamp,
+                        timestamp + delay,
                         appearTime,
                         targetPosition + new Offset(kDefaultAppearDistance, 0));
                     break;
@@ -208,6 +226,58 @@ namespace Components {
 
             objects.Remove(id);
             sortedObjects = null;
+            return true;
+        }
+
+        public bool destroyObject(
+            string id,
+            float delay = 0,
+            DisappearAnimation animation = DisappearAnimation.none,
+            float disappearTime = kDefaultDisappearTime
+        ) {
+            var obj = getObject(id);
+            if (obj == null) {
+                return false;
+            }
+            switch (animation) {
+                case DisappearAnimation.none:
+                    break;
+                case DisappearAnimation.fadeOut:
+                    obj.opacityTo(0, timestamp + delay, disappearTime, 0);
+                    break;
+                case DisappearAnimation.scale:
+                    obj.scaleTo(Size.zero,
+                        timestamp + delay,
+                        disappearTime);
+                    break;
+                case DisappearAnimation.overScale:
+                    obj.scaleTo(Size.zero,
+                        timestamp + delay,
+                        disappearTime,
+                        curve: Curves.easeOutBack.flipped);
+                    break;
+                case DisappearAnimation.toTop:
+                    obj.move(-new Offset(0, kDefaultDisappearDistance),
+                        timestamp + delay,
+                        disappearTime);
+                    break;
+                case DisappearAnimation.toBottom:
+                    obj.moveTo(new Offset(0, kDefaultDisappearDistance),
+                        timestamp + delay,
+                        disappearTime);
+                    break;
+                case DisappearAnimation.toLeft:
+                    obj.moveTo(-new Offset(kDefaultDisappearDistance, 0),
+                        timestamp + delay,
+                        disappearTime);
+                    break;
+                case DisappearAnimation.toRight:
+                    obj.moveTo(new Offset(kDefaultDisappearDistance, 0),
+                        timestamp + delay,
+                        disappearTime);
+                    break;
+            }
+            obj.dieAt(timestamp + disappearTime + delay);
             return true;
         }
 

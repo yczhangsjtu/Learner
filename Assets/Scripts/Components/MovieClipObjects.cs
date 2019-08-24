@@ -41,6 +41,20 @@ namespace Components {
             this.id = id;
             _layer = layer;
             _index = currentIndex++;
+            initConstants(
+                position: position,
+                pivot: pivot,
+                scale: scale,
+                rotation: rotation,
+                opacity: opacity);
+        }
+
+        public void initConstants(
+            Offset position = null,
+            Size scale = null,
+            float rotation = 0,
+            Offset pivot = null,
+            float opacity = 1) {
             initConstantPosition(position);
             initConstantPivot(pivot);
             initConstantScale(scale);
