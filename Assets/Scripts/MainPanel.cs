@@ -7,6 +7,7 @@ using Unity.UIWidgets.widgets;
 using UnityEngine;
 using Components;
 using Unity.UIWidgets.ui;
+using Unity.UIWidgets.painting;
 
 public class MainPanel : UIWidgetsPanel
 {
@@ -40,26 +41,26 @@ public class MainPanel : UIWidgetsPanel
                         new List<MovieClipDataFrame>{
                             new MovieClipDataFrame(
                                 0.5f, snapshot => {
-                                    snapshot.createObject(new BasicMovieClipObject(
-                                            "text",
-                                            child: new Text("Hello World")
+                                    snapshot.createObject(new MovieClipTextObject(
+                                            "text", "Hello World"
                                         ),
-                                        position: new Offset(100, 100),
+                                        position: new Offset(300, 100),
                                         animation: AppearAnimation.fadeIn);
                                 }
                             ),
                             new MovieClipDataFrame(
                                 2, snapshot => {
-                                    var obj = snapshot.getObject("text");
                                     snapshot.moveObject("text", new Offset(100, 0), duration: 1);
                                     snapshot.scaleObjectTo("text", new Size(2, 2));
+                                    snapshot.animateTo<TextStyle>("text", style => style.copyWith(color: Colors.green));
                                 }
                             ),
                             new MovieClipDataFrame(
                                 2, snapshot => {
-                                    var obj = snapshot.getObject("text");
                                     snapshot.moveObject("text", new Offset(0, 100), duration: 1);
                                     snapshot.rotateObjectTo("text", 2 * Mathf.PI, duration: 3);
+                                    snapshot.animateTo<TextStyle>("text",
+                                        style => style.copyWith(letterSpacing: 5.0f));
                                     snapshot.createObject(new BasicMovieClipObject(
                                             "rect",
                                             child: new Container(

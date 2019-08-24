@@ -1,6 +1,7 @@
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
+using Unity.UIWidgets.painting;
 
 namespace Components {
     public interface Property { }
@@ -114,13 +115,23 @@ namespace Components {
         }
     }
 
-    public class OffsetProperty : Property<Offset>, PropertyData<Offset> {
+    public class OffsetProperty : Property<Offset> {
         public OffsetProperty(float startTime, float endTime, Offset begin, Offset end, Curve curve = null) : base(
             startTime: startTime,
             endTime: endTime, begin: begin, end: end, curve: curve) { }
 
         public override Offset lerp(float t) {
             return begin + (end - begin) * t;
+        }
+    }
+    
+    public class TextStyleProperty : Property<TextStyle> {
+        public TextStyleProperty(float startTime, float endTime, TextStyle begin, TextStyle end, Curve curve = null) : base(
+            startTime: startTime,
+            endTime: endTime, begin: begin, end: end, curve: curve) { }
+
+        public override TextStyle lerp(float t) {
+            return TextStyle.lerp(begin, end, t);
         }
     }
 
@@ -134,17 +145,5 @@ namespace Components {
         public override string ToString() {
             return $"{GetType()}(value: {begin})";
         }
-    }
-
-    public class ConstantOffsetProperty : ConstantProperty<Offset> {
-        public ConstantOffsetProperty(Offset value) : base(value) {}
-    }
-
-    public class ConstantSizeProperty : ConstantProperty<Size> {
-        public ConstantSizeProperty(Size value) : base(value) {}
-    }
-
-    public class ConstantFloatProperty : ConstantProperty<float> {
-        public ConstantFloatProperty(float value) : base(value) {}
     }
 }

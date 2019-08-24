@@ -1,8 +1,13 @@
 using System;
+using System.Diagnostics;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
+using Unity.UIWidgets.material;
 using Unity.UIWidgets.ui;
+using Unity.UIWidgets.painting;
 using Unity.UIWidgets.widgets;
+using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Components {
     public abstract class MovieClipObject : ICloneable {
@@ -64,37 +69,37 @@ namespace Components {
 
         public void initConstantPosition(Offset position) {
             if (position != null) {
-                this.position = new ConstantOffsetProperty(position);
+                this.position = new ConstantProperty<Offset>(position);
             }
             else {
-                this.position = new ConstantOffsetProperty(Offset.zero);
+                this.position = new ConstantProperty<Offset>(Offset.zero);
             }
         }
         
         public void initConstantPivot(Offset pivot) {
             if (pivot != null) {
-                this.pivot = new ConstantOffsetProperty(pivot);
+                this.pivot = new ConstantProperty<Offset>(pivot);
             }
             else {
-                this.pivot = new ConstantOffsetProperty(new Offset(0.5f, 0.5f));
+                this.pivot = new ConstantProperty<Offset>(new Offset(0.5f, 0.5f));
             }
         }
 
         public void initConstantScale(Size scale) {
             if (scale != null) {
-                this.scale = new ConstantSizeProperty(scale);
+                this.scale = new ConstantProperty<Size>(scale);
             }
             else {
-                this.scale = new ConstantSizeProperty(originalSize);
+                this.scale = new ConstantProperty<Size>(originalSize);
             }
         }
 
         public void initConstantRotation(float rotation) {
-            this.rotation = new ConstantFloatProperty(rotation);
+            this.rotation = new ConstantProperty<float>(rotation);
         }
 
         public void initConstantOpacity(float opacity) {
-            this.opacity = new ConstantFloatProperty(opacity);
+            this.opacity = new ConstantProperty<float>(opacity);
         }
 
         public void moveTo(Offset position, float startTime, float duration, Offset fromPosition = null, Curve curve = null) {
@@ -208,6 +213,70 @@ namespace Components {
 
         public override Widget build(BuildContext context, float t) {
             return child;
+        }
+    }
+
+    public interface MovieClipObjectWithProperty<T> {
+        T getProperty(float t);
+        void animateTo(T target, float startTime, float duration, T from, Curve curve);
+    }
+
+    public class MovieClipTextObject : MovieClipObject, MovieClipObjectWithProperty<TextStyle> {
+        public MovieClipTextObject(
+            string id,
+            string text,
+            TextStyle style = null,
+            int layer = 0,
+            Offset position = null,
+            Size scale = null,
+            float rotation = 0,
+            Offset pivot = null,
+            float opacity = 1) : base(id, layer, position, scale, rotation, pivot, opacity) {
+            this.text = text;
+            initProperty(style);
+        }
+        
+        static readonly TextStyle defaultTextStyle = new TextStyle(
+            color: Colors.black,
+            fontSize: 32,
+            letterSpacing: 10
+        );
+        
+        public void initProperty(TextStyle textStyle) {
+            this.textStyle = new ConstantProperty<TextStyle>(textStyle?.merge(defaultTextStyle) ?? defaultTextStyle);
+        }
+
+        public override object Clone() {
+            var ret = new MovieClipTextObject(id, text);
+            ret.copyInternalFrom(this);
+            ret.textStyle = textStyle;
+            return ret;
+        }
+
+        public TextStyle getProperty(float t) {
+            return textStyle.evaluate(t);
+        }
+
+        public override Widget build(BuildContext context, float t) {
+            return new Text(text, style: textStyle.evaluate(t));
+        }
+
+        public readonly string text;
+        public PropertyData<TextStyle> textStyle;
+        
+        public void animateTo(
+            TextStyle target,
+            float startTime,
+            float duration,
+            TextStyle from = null,
+            Curve curve = null) {
+            textStyle = new TextStyleProperty(
+                startTime: startTime,
+                endTime: startTime + duration,
+                begin: from ?? this.textStyle.evaluate(startTime),
+                end: target,
+                curve: curve
+            );
         }
     }
 }

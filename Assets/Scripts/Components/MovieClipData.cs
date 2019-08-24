@@ -407,6 +407,27 @@ namespace Components {
             return true;
         }
 
+        public delegate T PropertyProvider<T>(T value);
+
+        public bool animateTo<T>(string id, PropertyProvider<T> target, float delay = 0, float? duration = null, PropertyProvider<T> from = null,
+            Curve curve = null) where T : class {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            if (obj is MovieClipObjectWithProperty<T> objWithProperty) {
+                var f = objWithProperty.getProperty(timestamp + delay);
+                var t = target(@from?.Invoke(f) ?? f);
+                objWithProperty.animateTo(
+                    target: target(f),
+                    startTime: timestamp + delay,
+                    duration: duration ?? _defaultDuration,
+                    from: @from?.Invoke(f),
+                    curve: curve);
+                return true;
+            }
+
+            return false;
+        }
+
 
         public MovieClipSnapshot copyWith(MovieClipDataSnapshotModifier modifier, float duration) {
             D.assert(duration > 0);
