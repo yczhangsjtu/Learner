@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
@@ -138,14 +139,23 @@ namespace Components {
         }
 
         public MovieClipSnapshot copyWith(MovieClipDataSnapshotModifier modifier, float duration) {
+            D.assert(duration > 0);
+            Dictionary<string, MovieClipObject> updatedDictionary = new Dictionary<string, MovieClipObject>();
+            float newTimestamp = timestamp + duration;
+            foreach (var id in objects.Keys) {
+                var obj = objects[id];
+                if(obj.deathTime == null || obj.deathTime > newTimestamp)
+                    updatedDictionary[id] = obj;
+            }
             var snapshot = new MovieClipSnapshot(
                 objects.ToDictionary(
                     entry => entry.Key,
                     entry => (MovieClipObject) entry.Value.Clone()
                 ),
-                timestamp + duration
+                newTimestamp
             );
             modifier(snapshot);
+            
             return snapshot;
         }
 
@@ -164,8 +174,15 @@ namespace Components {
             return new Stack(
                 children: sortedObjects.Select<MovieClipObject, Widget>((obj) => {
                     Offset position = obj.position.evaluate(t);
+                    Size scale = obj.scale.evaluate(t);
+                    float rotation = obj.rotation.evaluate(t);
+                    Matrix3 transform = Matrix3.makeRotate(rotation);
+                    transform.postScale(scale.width, scale.height);
                     return new Positioned(
-                        child: obj.build(context, t),
+                        child: new Transform(
+                            child: obj.build(context, t),
+                            transform: transform
+                        ),
                         left: position.dx,
                         top: position.dy
                     );

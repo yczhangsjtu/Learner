@@ -5,7 +5,12 @@ using Unity.UIWidgets.ui;
 namespace Components {
     public interface Property { }
 
-    public abstract class Property<T> : Tween<T>, Property {
+    public interface PropertyData<T> {
+        T lerp(float t);
+        T evaluate(float t);
+    }
+
+    public abstract class Property<T> : Tween<T>, PropertyData<T>, Property {
         public readonly float duration;
         public readonly float startTime;
         public readonly float endTime;
@@ -109,12 +114,7 @@ namespace Components {
         }
     }
 
-    public interface OffsetPropertyData {
-        Offset lerp(float t);
-        Offset evaluate(float t);
-    }
-
-    public class OffsetProperty : Property<Offset>, OffsetPropertyData {
+    public class OffsetProperty : Property<Offset>, PropertyData<Offset> {
         public OffsetProperty(float startTime, float endTime, Offset begin, Offset end, Curve curve = null) : base(
             startTime: startTime,
             endTime: endTime, begin: begin, end: end, curve: curve) { }
@@ -136,7 +136,15 @@ namespace Components {
         }
     }
 
-    public class ConstantOffsetProperty : ConstantProperty<Offset>, OffsetPropertyData {
+    public class ConstantOffsetProperty : ConstantProperty<Offset> {
         public ConstantOffsetProperty(Offset value) : base(value) {}
+    }
+
+    public class ConstantSizeProperty : ConstantProperty<Size> {
+        public ConstantSizeProperty(Size value) : base(value) {}
+    }
+
+    public class ConstantFloatProperty : ConstantProperty<float> {
+        public ConstantFloatProperty(float value) : base(value) {}
     }
 }
