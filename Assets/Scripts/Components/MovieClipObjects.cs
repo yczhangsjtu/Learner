@@ -25,6 +25,7 @@ namespace Components {
         public PropertyData<Size> scale;
         public PropertyData<float> rotation;
         public float? deathTime = null;
+        public static Size originalSize = new Size(1, 1);
 
         public MovieClipObject(
             string id,
@@ -47,7 +48,7 @@ namespace Components {
                 this.scale = new ConstantSizeProperty(scale);
             }
             else {
-                this.scale = new ConstantSizeProperty(Size.zero);
+                this.scale = new ConstantSizeProperty(originalSize);
             }
 
             if (rotation != null) {
@@ -98,6 +99,8 @@ namespace Components {
             _index = obj.index;
             _layer = obj.layer;
             position = obj.position;
+            scale = obj.scale;
+            rotation = obj.rotation;
         }
 
         public abstract Widget build(BuildContext context, float t);

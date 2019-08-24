@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.widgets;
+using UnityEngine.UIElements;
 
 /*
  * 
@@ -30,13 +32,17 @@ namespace Components {
 
     internal class MovieClipState : TickerProviderStateMixin<MovieClip> {
         private AnimationController controller;
+        private Animation<float> animation;
 
         public override void initState() {
             base.initState();
-            if (widget.data != null)
+            if (widget.data != null) {
                 controller = new AnimationController(
                     duration: TimeSpan.FromSeconds(widget.data.duration),
                     vsync: this);
+                animation = new FloatTween(begin: 0, end: widget.data.duration).animate(controller);
+            }
+
             controller.forward();
         }
 
@@ -51,8 +57,8 @@ namespace Components {
                 height: widget.height,
                 child: controller != null
                     ? new AnimatedBuilder(
-                        animation: controller,
-                        builder: (buildContext, child) => widget.data.build(buildContext, controller.value))
+                        animation: animation,
+                        builder: (buildContext, child) => widget.data.build(buildContext, animation.value))
                     : null
             );
         }
