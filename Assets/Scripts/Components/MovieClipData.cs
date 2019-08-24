@@ -111,6 +111,7 @@ namespace Components {
         }
 
         private float _timestamp;
+        private float _defaultDuration;
 
         private List<MovieClipObject> sortedObjects;
 
@@ -289,6 +290,123 @@ namespace Components {
             sortedObjects = null;
             return true;
         }
+        
+        public bool moveObjectTo(
+            string id,
+            Offset position,
+            float delay = 0,
+            float? duration = null,
+            Offset fromPosition = null,
+            Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.moveTo(position,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                fromPosition: fromPosition,
+                curve: curve);
+            return true;
+        }
+
+        public bool moveObject(
+            string id,
+            Offset offset,
+            float delay = 0,
+            float? duration = null,
+            Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.move(offset,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                curve: curve);
+            return true;
+        }
+        
+        public bool objectPivotTo(string id, Offset pivot, float delay = 0, float? duration = null, Offset fromPosition = null, Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.pivotTo(pivot,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                fromPosition: fromPosition,
+                curve: curve);
+            return true;
+        }
+
+        public bool objectPivotChangeBy(string id, Offset offset, float delay = 0, float? duration = null, Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.pivotChangeBy(offset,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                curve: curve);
+            return true;
+        }
+
+        public bool rotateObjectTo(string id, float rotation, float delay = 0, float? duration = null, float? fromRotation = null, Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.rotateTo(rotation,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                fromRotation: fromRotation,
+                curve: curve);
+            return true;
+        }
+
+        public bool rotateObjectBy(string id, float rotation, float delay = 0, float? duration = null, Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.rotateBy(rotation,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                curve: curve);
+            return true;
+        }
+
+        public bool scaleObjectTo(string id, Size scale, float delay = 0, float? duration = null, Size fromScale = null, Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.scaleTo(scale,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                fromScale: fromScale,
+                curve: curve);
+            return true;
+        }
+
+        public bool scaleObjectBy(string id, Size scale, float delay = 0, float? duration = null, Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.scaleBy(scale,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                curve: curve);
+            return true;
+        }
+
+        public bool objectOpacityTo(string id, float opacity, float delay = 0, float? duration = null, float? fromOpacity = null, Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.opacityTo(opacity,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                fromOpacity: fromOpacity,
+                curve: curve);
+            return true;
+        }
+
+        public bool objectOpacityChangeBy(string id, float delta, float delay = 0, float? duration = null, Curve curve = null) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.opacityChangeBy(delta,
+                startTime: timestamp + delay,
+                duration: duration ?? _defaultDuration,
+                curve: curve);
+            return true;
+        }
+
 
         public MovieClipSnapshot copyWith(MovieClipDataSnapshotModifier modifier, float duration) {
             D.assert(duration > 0);
@@ -306,6 +424,7 @@ namespace Components {
                 ),
                 timestamp
             );
+            snapshot._defaultDuration = duration;
             modifier(snapshot);
             snapshot._timestamp = newTimestamp;
             

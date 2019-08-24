@@ -158,7 +158,7 @@ namespace Components {
                 startTime, duration, fromScale, curve);
         }
 
-        public void opacityTo(float opacity, float startTime, float duration, float? fromOpacity, Curve curve = null) {
+        public void opacityTo(float opacity, float startTime, float duration, float? fromOpacity = null, Curve curve = null) {
             this.opacity = new FloatProperty(
                 startTime: startTime,
                 endTime: startTime + duration,

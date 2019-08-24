@@ -40,11 +40,10 @@ public class MainPanel : UIWidgetsPanel
                         new List<MovieClipDataFrame>{
                             new MovieClipDataFrame(
                                 0.5f, snapshot => {
-                                    var obj = new BasicMovieClipObject(
-                                        "text",
-                                        child: new Text("Hello World")
-                                    );
-                                    snapshot.createObject(obj,
+                                    snapshot.createObject(new BasicMovieClipObject(
+                                            "text",
+                                            child: new Text("Hello World")
+                                        ),
                                         position: new Offset(100, 100),
                                         animation: AppearAnimation.fadeIn);
                                 }
@@ -52,15 +51,15 @@ public class MainPanel : UIWidgetsPanel
                             new MovieClipDataFrame(
                                 2, snapshot => {
                                     var obj = snapshot.getObject("text");
-                                    obj.move(new Offset(100, 0), snapshot.timestamp, 1);
-                                    obj?.scaleTo(new Size(2, 2), snapshot.timestamp, 2);
+                                    snapshot.moveObject("text", new Offset(100, 0), duration: 1);
+                                    snapshot.scaleObjectTo("text", new Size(2, 2));
                                 }
                             ),
                             new MovieClipDataFrame(
                                 2, snapshot => {
                                     var obj = snapshot.getObject("text");
-                                    obj.move(new Offset(0, 100), snapshot.timestamp, 1);
-                                    obj?.rotateTo(2 * Mathf.PI, snapshot.timestamp, 2);
+                                    snapshot.moveObject("text", new Offset(0, 100), duration: 1);
+                                    snapshot.rotateObjectTo("text", 2 * Mathf.PI, duration: 3);
                                     snapshot.createObject(new BasicMovieClipObject(
                                             "rect",
                                             child: new Container(
@@ -79,8 +78,7 @@ public class MainPanel : UIWidgetsPanel
                             new MovieClipDataFrame(
                                 2, snapshot => {
                                     snapshot.destroyObject("text", animation: DisappearAnimation.overScale);
-                                    var obj = snapshot.getObject("rect");
-                                    obj.move(new Offset(200, 0), snapshot.timestamp, 2);
+                                    snapshot.moveObject("rect", new Offset(200, 0));
                                 }
                             ),
                         }
