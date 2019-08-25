@@ -71,6 +71,8 @@ namespace Components {
     public class ColorProperty : Property<Color> {
         public ColorProperty(float startTime, float endTime, Color begin, Color end, Curve curve = null) : base(
             startTime: startTime, endTime: endTime, begin: begin, end: end, curve: curve) { }
+        
+        public ColorProperty(Color value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
 
         public override Color lerp(float t) {
             return Color.lerp(begin, end, t);
@@ -84,6 +86,8 @@ namespace Components {
     public class SizeProperty : Property<Size> {
         public SizeProperty(float startTime, float endTime, Size begin, Size end, Curve curve = null) : base(
             startTime: startTime, endTime: endTime, begin: begin, end: end, curve: curve) { }
+        
+        public SizeProperty(Size value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
 
         public override Size lerp(float t) {
             return Size.lerp(begin, end, t);
@@ -97,6 +101,8 @@ namespace Components {
     public class RectProperty : Property<Rect> {
         public RectProperty(float startTime, float endTime, Rect begin, Rect end, Curve curve = null) : base(
             startTime: startTime, endTime: endTime, begin: begin, end: end, curve: curve) { }
+        
+        public RectProperty(Rect value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
 
         public override Rect lerp(float t) {
             return Rect.lerp(begin, end, t);
@@ -111,6 +117,8 @@ namespace Components {
         public IntProperty(float startTime, float endTime, int begin, int end, Curve curve = null) : base(
             startTime: startTime,
             endTime: endTime, begin: begin, end: end, curve: curve) { }
+        
+        public IntProperty(int value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
 
         public override int lerp(float t) {
             return (begin + (end - begin) * t).round();
@@ -125,6 +133,8 @@ namespace Components {
         public NullableFloatProperty(float startTime, float endTime, float? begin, float? end, Curve curve = null) :
             base(startTime: startTime, endTime: endTime, begin: begin, end: end, curve: curve) { }
 
+        public NullableFloatProperty(float? value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
+        
         public override float? lerp(float t) {
             D.assert(begin != null);
             D.assert(end != null);
@@ -141,6 +151,8 @@ namespace Components {
             startTime: startTime,
             endTime: endTime, begin: begin, end: end, curve: curve) { }
 
+        public FloatProperty(float value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
+        
         public override float lerp(float t) {
             return begin + (end - begin) * t;
         }
@@ -155,6 +167,8 @@ namespace Components {
             startTime: startTime,
             endTime: endTime, begin: begin, end: end, curve: curve) { }
 
+        public StepProperty(int value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
+        
         public override int lerp(float t) {
             return (begin + (end - begin) * t).floor();
         }
@@ -168,6 +182,8 @@ namespace Components {
         public OffsetProperty(float startTime, float endTime, Offset begin, Offset end, Curve curve = null) : base(
             startTime: startTime,
             endTime: endTime, begin: begin, end: end, curve: curve) { }
+        
+        public OffsetProperty(Offset value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
 
         public override Offset lerp(float t) {
             return begin + (end - begin) * t;
@@ -183,28 +199,14 @@ namespace Components {
             startTime: startTime,
             endTime: endTime, begin: begin, end: end, curve: curve) { }
 
+        public TextStyleProperty(TextStyle value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
+        
         public override TextStyle lerp(float t) {
             return TextStyle.lerp(begin, end, t);
         }
 
         public override object Clone() {
             return new TextStyleProperty(startTime, endTime, begin, end, curve);
-        }
-    }
-
-    public class ConstantProperty<T> : Property<T> {
-        public ConstantProperty(T value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
-
-        public override T lerp(float t) {
-            return begin;
-        }
-
-        public override string ToString() {
-            return $"{GetType()}(value: {begin})";
-        }
-
-        public override object Clone() {
-            return new ConstantProperty<T>(begin);
         }
     }
 }

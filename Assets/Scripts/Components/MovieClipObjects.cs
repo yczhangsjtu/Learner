@@ -1,16 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
 using Unity.UIWidgets.widgets;
-using UnityEngine;
 using Color = Unity.UIWidgets.ui.Color;
-using Debug = UnityEngine.Debug;
 
 namespace Components {
     public abstract class MovieClipObject : ICloneable {
@@ -72,37 +68,37 @@ namespace Components {
 
         public void initConstantPosition(Offset position) {
             if (position != null) {
-                this.position = new ConstantProperty<Offset>(position);
+                this.position = new OffsetProperty(position);
             }
             else {
-                this.position = new ConstantProperty<Offset>(Offset.zero);
+                this.position = new OffsetProperty(Offset.zero);
             }
         }
         
         public void initConstantPivot(Offset pivot) {
             if (pivot != null) {
-                this.pivot = new ConstantProperty<Offset>(pivot);
+                this.pivot = new OffsetProperty(pivot);
             }
             else {
-                this.pivot = new ConstantProperty<Offset>(new Offset(0.5f, 0.5f));
+                this.pivot = new OffsetProperty(new Offset(0.5f, 0.5f));
             }
         }
 
         public void initConstantScale(Size scale) {
             if (scale != null) {
-                this.scale = new ConstantProperty<Size>(scale);
+                this.scale = new SizeProperty(scale);
             }
             else {
-                this.scale = new ConstantProperty<Size>(originalSize);
+                this.scale = new SizeProperty(originalSize);
             }
         }
 
         public void initConstantRotation(float rotation) {
-            this.rotation = new ConstantProperty<float>(rotation);
+            this.rotation = new FloatProperty(rotation);
         }
 
         public void initConstantOpacity(float opacity) {
-            this.opacity = new ConstantProperty<float>(opacity);
+            this.opacity = new FloatProperty(opacity);
         }
 
         public void moveTo(Offset position, float startTime, float duration, Offset fromPosition = null, Curve curve = null) {
@@ -297,7 +293,7 @@ namespace Components {
         );
         
         public void initProperty(TextStyle textStyle) {
-            this.textStyle = new ConstantProperty<TextStyle>(textStyle?.merge(defaultTextStyle) ?? defaultTextStyle);
+            this.textStyle = new TextStyleProperty(textStyle?.merge(defaultTextStyle) ?? defaultTextStyle);
         }
 
         public override object Clone() {
@@ -377,11 +373,11 @@ namespace Components {
         
         void initConstantTextStyle(TextStyle style) {
             parameters["text style"] =
-                new ConstantProperty<TextStyle>(style?.merge(defaultTextStyle) ?? defaultTextStyle);
+                new TextStyleProperty(style?.merge(defaultTextStyle) ?? defaultTextStyle);
         }
 
         void initConstantColor(Color color) {
-            parameters["color"] = new ConstantProperty<Color>(color ?? Colors.white);
+            parameters["color"] = new ColorProperty(color ?? Colors.white);
         }
 
         public override Widget builder(BuildContext context, ParameterGetter getter, float t) {
