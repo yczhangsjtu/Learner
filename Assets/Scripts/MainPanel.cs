@@ -55,52 +55,12 @@ public class MainPanel : UIWidgetsPanel
             return new Scaffold(
                 body: new ListView(
                     children: new List<Widget> {
-                        new Align(
-                            alignment: Alignment.center,
-                            child: new RaisedButton(child: new Text("Press Me"),
-                                color: Colors.lime,
-                                onPressed: () => {}
-                            )
-                        ),
-                        new Align(
-                            alignment: Alignment.center,
-                            child: new SizedBox(
-                                width: 300,
-                                height: 100,
-                                child: new TextField(
-                                    controller: controller
-                                )
-                            )
-                        ),
-                        new Align(
-                            alignment: Alignment.center,
-                            child: new TextList(
-                                texts: new List<string> {
-                                    "Hello",
-                                    "World",
-                                    "(13, 45, 22)",
-                                    "(66, 13, 17)"
-                                }, 
-                                style: new TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold
-                                ),
-                                decoration: new BoxDecoration(
-                                    color: Colors.yellow,
-                                    border: Border.all(
-                                        color: Colors.green
-                                    )
-                                       
-                                )
-                            )
-                        ),
-                        
                         new MovieClip(
                             movieClipData: new MovieClipData(
                                 new List<MovieClipDataFrame>{
                                     new MovieClipDataFrame(
                                         0.5f, snapshot => {
-                                            snapshot.createTextObject("text", "Hello World",
+                                            snapshot.createText("text", "Hello World",
                                                 position: new Offset(300, 100),
                                                 animation: AppearAnimation.fadeIn);
                                         }
@@ -115,48 +75,81 @@ public class MainPanel : UIWidgetsPanel
                                     new MovieClipDataFrame(
                                         2, snapshot => {
                                             snapshot.moveObject("text", new Offset(0, 100), duration: 1);
-                                            snapshot.rotateObjectTo("text", 2 * Mathf.PI, duration: 3);
+                                            snapshot.rotateObjectBy("text", 10 * Mathf.PI, duration: 10);
                                             snapshot.animateTo<TextStyle>("text",
                                                 style => style.copyWith(letterSpacing: 5.0f));
-                                            snapshot.createObject(new BasicMovieClipObject(
-                                                    "rect",
-                                                    child: new Container(
-                                                        color: Colors.blue,
-                                                        child: new SizedBox(
-                                                            width: 50,
-                                                            height: 50
-                                                        )
+                                            snapshot.createBasicObject(
+                                                "rect",
+                                                new Container(
+                                                    color: Colors.blue,
+                                                    child: new SizedBox(
+                                                        width: 50,
+                                                        height: 50
                                                     )
                                                 ),
                                                 position: new Offset(100, 100),
                                                 animation: AppearAnimation.overScale
                                             );
-                                            snapshot.createObject(new BasicMovieClipObject(
-                                                    "text_field",
-                                                    child: new SizedBox(
-                                                        width: 100,
-                                                        height: 100,
-                                                        child: new TextField(
-                                                            key: textKey,
-                                                            controller: controller
-                                                        )
+                                            snapshot.createBasicObject(
+                                                "text_field",
+                                                new SizedBox(
+                                                    width: 100,
+                                                    height: 100,
+                                                    child: new TextField(
+                                                        key: textKey,
+                                                        controller: controller
                                                     )
                                                 ),
                                                 position: new Offset(200, 200),
                                                 animation: AppearAnimation.fromLeft);
-                                            snapshot.createObject(new BasicMovieClipObject(
-                                                    "button",
-                                                    child: new RaisedButton(
-                                                        color: Colors.cyan,
-                                                        child: new Text("Press Me"),
-                                                        onPressed: () => {}
-                                                    )
+                                            snapshot.createBasicObject(
+                                                "button",
+                                                child: new RaisedButton(
+                                                    color: Colors.cyan,
+                                                    child: new Text("Press Me"),
+                                                    onPressed: () => {}
                                                 ),
+                                                layer: 1,
                                                 position: new Offset(300, 200),
                                                 pivot: Offset.zero,
                                                 animation: AppearAnimation.overScale
                                             );
+                                            snapshot.createTextBox(
+                                                "textbox",
+                                                "Hello TextBox",
+                                                maxWidth: 300,
+                                                layer: -1,
+                                                position: new Offset(600, 200),
+                                                animation: AppearAnimation.overScale);
                                             snapshot.moveObject("button", new Offset(600, 0), delay: 0.3f, duration: 20);
+                                        }
+                                    ),
+                                    new MovieClipDataFrame(
+                                        2, snapshot => {
+                                                snapshot.createBasicObject(
+                                                    "list",
+                                                    child: new TextList(
+                                                        texts: new List<string> {
+                                                            "(11, 2)",
+                                                            "(22, 4)",
+                                                            "(13, 45, 22)",
+                                                            "(66, 13, 17)"
+                                                        }, 
+                                                        style: new TextStyle(
+                                                            color: Colors.blue,
+                                                            fontWeight: FontWeight.bold
+                                                        ),
+                                                        decoration: new BoxDecoration(
+                                                            color: Colors.yellow,
+                                                            border: Border.all(
+                                                                color: Colors.green
+                                                            )
+                                                               
+                                                        )
+                                                    ),
+                                                    position: new Offset(400, 200),
+                                                    animation: AppearAnimation.scale
+                                            );
                                         }
                                     ),
                                     new MovieClipDataFrame(

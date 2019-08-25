@@ -2,11 +2,48 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.UIWidgets.foundation;
+using Unity.UIWidgets.material;
 using Unity.UIWidgets.painting;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 
 namespace Components {
+
+    public class TextBox : TextList {
+
+        public TextBox(
+            string text,
+            TextStyle style,
+            Color color = null,
+            TextAlign textAlign = TextAlign.center,
+            int? maxLines = null,
+            float? lineHeight = null,
+            string ellipsis = null,
+            Axis direction = Axis.vertical,
+            float maxWidth = 200,
+            float? maxHeight = null,
+            float? minWidth = 100,
+            float? minHeight = 10,
+            EdgeInsets padding = null,
+            BoxDecoration decoration = null) :
+            base(texts: new List<string>{text},
+                style: style,
+                textAlign: textAlign,
+                maxLines: maxLines,
+                lineHeight: lineHeight,
+                ellipsis: ellipsis,
+                direction: direction,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                minWidth: minWidth,
+                minHeight: minHeight,
+                padding: padding,
+                decoration: decoration ??
+                    new BoxDecoration(
+                        color: color ?? Colors.white,
+                        border: Border.all(color: Colors.black)
+                    )) {}
+    }
 
     public class TextList : StatelessWidget {
         public TextList(
@@ -17,7 +54,7 @@ namespace Components {
             float? lineHeight = null,
             string ellipsis = null,
             Axis direction = Axis.vertical,
-            float? maxWidth = 100,
+            float maxWidth = 200,
             float? maxHeight = 100,
             float? minWidth = 100,
             float? minHeight = 10,
@@ -43,15 +80,13 @@ namespace Components {
                 ParagraphBuilder builder = new ParagraphBuilder(paragraphStyle);
                 textSpan.build(builder);
                 Paragraph paragraph = builder.build();
-                paragraph.layout(maxWidth == null || maxWidth <= padding.left + padding.right
-                    ? null
-                    : new ParagraphConstraints(maxWidth.Value - padding.left - padding.right));
+                paragraph.layout(new ParagraphConstraints(maxWidth - padding.left - padding.right));
                 this.texts.Add(paragraph);
                 
                 float height = paragraph.height + padding.top + padding.bottom;
                 if (maxHeight != null) height = height.clamp(minHeight ?? 0.0f, maxHeight.Value);
                 float width = paragraph.width + padding.left + padding.horizontal;
-                if (maxWidth != null) width = width.clamp(minWidth ?? 0.0f, maxWidth.Value);
+                width = width.clamp(minWidth ?? 0.0f, maxWidth);
 
                 heights.Add(height);
                 widths.Add(width);

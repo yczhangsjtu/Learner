@@ -409,13 +409,17 @@ namespace Components {
 
         public delegate T PropertyProvider<T>(T value);
 
-        public bool animateTo<T>(string id, PropertyProvider<T> target, float delay = 0, float? duration = null, PropertyProvider<T> from = null,
+        public bool animateTo<T>(
+            string id,
+            PropertyProvider<T> target,
+            float delay = 0,
+            float? duration = null,
+            PropertyProvider<T> from = null,
             Curve curve = null) where T : class {
             var obj = getObject(id);
             if (obj == null) return false;
             if (obj is MovieClipObjectWithProperty<T> objWithProperty) {
                 var f = objWithProperty.getProperty(timestamp + delay);
-                var t = target(@from?.Invoke(f) ?? f);
                 objWithProperty.animateTo(
                     target: target(f),
                     startTime: timestamp + delay,
@@ -428,15 +432,38 @@ namespace Components {
             return false;
         }
 
+        public bool animateTo<T>(
+            string id,
+            string paramName,
+            PropertyProvider<T> target,
+            float delay = 0,
+            float? duration = null,
+            PropertyProvider<T> from = null,
+            Curve curve = null) where T : class {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            if (obj is BuilderMovieClipObject builderObject) {
+                var f = builderObject.getParameter(paramName, timestamp + delay) as T;
+                return builderObject.animateTo(
+                    paramName,
+                    target: target(f),
+                    startTime: timestamp + delay,
+                    duration: duration ?? _defaultDuration,
+                    from: @from?.Invoke(f),
+                    curve: curve);
+            }
+
+            return false;
+        }
 
         public MovieClipSnapshot copyWith(MovieClipDataSnapshotModifier modifier, float duration) {
             D.assert(duration > 0);
             Dictionary<string, MovieClipObject> updatedDictionary = new Dictionary<string, MovieClipObject>();
             float newTimestamp = timestamp + duration;
-            foreach (var id in objects.Keys) {
-                var obj = objects[id];
+            foreach (var entry in objects) {
+                var obj = entry.Value;
                 if(obj.deathTime == null || obj.deathTime > newTimestamp)
-                    updatedDictionary[id] = obj;
+                    updatedDictionary.Add(entry.Key, entry.Value);
             }
             var snapshot = new MovieClipSnapshot(
                 objects.ToDictionary(

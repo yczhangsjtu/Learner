@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
@@ -7,6 +9,7 @@ using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
+using Color = Unity.UIWidgets.ui.Color;
 using Debug = UnityEngine.Debug;
 
 namespace Components {
@@ -184,7 +187,7 @@ namespace Components {
 
         public abstract object Clone();
 
-        protected void copyInternalFrom(MovieClipObject obj) {
+        protected virtual void copyInternalFrom(MovieClipObject obj) {
             _index = obj.index;
             _layer = obj.layer;
             position = obj.position;
@@ -218,6 +221,60 @@ namespace Components {
         }
     }
 
+    public delegate object ParameterGetter(string paramName, float t);
+
+    public abstract class BuilderMovieClipObject : MovieClipObject {
+        
+        internal BuilderMovieClipObject(
+            string id,
+            float startTime = 0,
+            int layer = 0)
+            : base(id: id, layer: layer) {
+            this.startTime = startTime;
+        }
+
+        public readonly float startTime;
+        public readonly Dictionary<string, Property> parameters =
+            new Dictionary<string, Property>();
+
+        public abstract Widget builder(BuildContext context, ParameterGetter getter, float t);
+        
+        protected override void copyInternalFrom(MovieClipObject obj) {
+            base.copyInternalFrom(obj);
+            if (obj is BuilderMovieClipObject builderObject) {
+                parameters.Clear();
+                foreach (var entry in builderObject.parameters) {
+                    parameters.Add(entry.Key, entry.Value);
+                }
+            }
+        }
+
+        public object getParameter(string paramName, float t) {
+            return !parameters.TryGetValue(paramName, out var ret) ? null : (ret as dynamic).evaluate(t);
+        }
+
+        public bool animateTo<T>(string paramName, T target, float startTime, float duration,
+            bool useFrom = false, T from = default(T), Curve curve = null) {
+            if(!parameters.TryGetValue(paramName, out var property))
+                return false;
+            if (property is Property<T> propertyT) {
+                parameters[paramName] = propertyT.copyWith(
+                    startTime: startTime,
+                    endTime: startTime + duration,
+                    begin: useFrom ? from : propertyT.evaluate(startTime),
+                    end: target,
+                    curve: curve
+                );
+                return true;
+            }
+            return false;
+        }
+
+        public override Widget build(BuildContext context, float t) {
+            return builder(context, getParameter, t);
+        }
+    }
+
     public interface MovieClipObjectWithProperty<T> {
         T getProperty(float t);
         void animateTo(T target, float startTime, float duration, T from, Curve curve);
@@ -228,12 +285,7 @@ namespace Components {
             string id,
             string text,
             TextStyle style = null,
-            int layer = 0,
-            Offset position = null,
-            Size scale = null,
-            float rotation = 0,
-            Offset pivot = null,
-            float opacity = 1) : base(id, layer, position, scale, rotation, pivot, opacity) {
+            int layer = 0) : base(id, layer) {
             this.text = text;
             initProperty(style);
         }
@@ -282,26 +334,216 @@ namespace Components {
         }
     }
 
+    public class MovieClipTextBoxObject : BuilderMovieClipObject {
+        internal MovieClipTextBoxObject(
+            string id,
+            string text,
+            TextStyle style = null,
+            Color color = null,
+            TextAlign textAlign = TextAlign.center,
+            int? maxLines = null,
+            float? lineHeight = null,
+            string ellipsis = null,
+            Axis direction = Axis.vertical,
+            float  maxWidth = 200,
+            float? maxHeight = null,
+            float? minWidth = 100,
+            float? minHeight = 10,
+            EdgeInsets padding = null,
+            BoxDecoration decoration = null,
+            int layer = 0)
+            : base(id, layer) {
+            this.text = text;
+            this.textAlign = textAlign;
+            this.maxLines = maxLines;
+            this.lineHeight = lineHeight;
+            this.ellipsis = ellipsis;
+            this.direction = direction;
+            this.padding = padding;
+            this.decoration = decoration;
+            this.maxWidth = maxWidth;
+            this.maxHeight = maxHeight;
+            this.minWidth = minWidth;
+            this.minHeight = minHeight;
+            initConstantTextStyle(style);
+            initConstantColor(color);
+        }
+        
+       public static readonly TextStyle defaultTextStyle = new TextStyle(
+            color: Colors.black,
+            fontSize: 32,
+            letterSpacing: 10
+        );
+        
+        void initConstantTextStyle(TextStyle style) {
+            parameters["text style"] =
+                new ConstantProperty<TextStyle>(style?.merge(defaultTextStyle) ?? defaultTextStyle);
+        }
+
+        void initConstantColor(Color color) {
+            parameters["color"] = new ConstantProperty<Color>(color ?? Colors.white);
+        }
+
+        public override Widget builder(BuildContext context, ParameterGetter getter, float t) {
+            TextStyle _style = (TextStyle) getter("text style", t);
+            Color _color = (Color) getter("color", t);
+            return new TextBox(
+                text,
+                style: _style,
+                color: _color,
+                textAlign: textAlign,
+                maxLines: maxLines,
+                lineHeight: lineHeight,
+                ellipsis: ellipsis,
+                direction: direction,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                minWidth: minWidth,
+                minHeight: minHeight,
+                padding: padding,
+                decoration: this.decoration
+            );
+        
+        }
+        
+        public override object Clone() {
+            var ret = new MovieClipTextBoxObject(
+                id: id,
+                text: text,
+                textAlign: textAlign,
+                maxLines: maxLines,
+                lineHeight: lineHeight,
+                ellipsis: ellipsis,
+                direction: direction,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                minWidth: minWidth,
+                minHeight: minHeight,
+                padding: padding,
+                decoration: this.decoration
+            );
+            ret.copyInternalFrom(this);
+            return ret;
+        }
+
+        public readonly string text;
+        public readonly TextAlign textAlign;
+        public readonly int? maxLines;
+        public readonly float? lineHeight;
+        public readonly string ellipsis;
+        public readonly Axis direction;
+        public readonly EdgeInsets padding;
+        public readonly BoxDecoration decoration;
+        public readonly float  maxWidth;
+        public readonly float? maxHeight;
+        public readonly float? minWidth;
+        public readonly float? minHeight;
+    }
+    
+
     public static class MovieClipUtils {
-        public static void createTextObject(
+        public static void createText(
             this MovieClipSnapshot snapshot,
             string id, string text,
             TextStyle style = null,
             AppearAnimation animation = AppearAnimation.none,
             int layer = 0,
             Offset position = null,
+            Offset pivot = null,
             Size scale = null,
             float rotation = 0,
-            Offset pivot = null,
-            float opacity = 1) {
+            float opacity = 1,
+            float delay = 0,
+            float appearTime = MovieClipSnapshot.kDefaultAppearTime) {
             snapshot.createObject(new MovieClipTextObject(
                     id, text, style, layer: layer),
-                    position: position,
-                    scale: scale,
-                    rotation: rotation,
-                    pivot: pivot,
-                    opacity: opacity,
-                animation: animation);
+                position: position,
+                pivot: pivot,
+                scale: scale,
+                rotation: rotation,
+                opacity: opacity,
+                delay: delay,
+                animation: animation,
+                appearTime: appearTime);
+        }
+
+        public static void createBasicObject(
+            this MovieClipSnapshot snapshot,
+            string id,
+            Widget child,
+            AppearAnimation animation = AppearAnimation.none,
+            int layer = 0,
+            Offset position = null,
+            Offset pivot = null,
+            Size scale = null,
+            float rotation = 0,
+            float opacity = 1,
+            float delay = 0,
+            float appearTime = MovieClipSnapshot.kDefaultAppearTime) {
+            snapshot.createObject(new BasicMovieClipObject(id, child, layer),
+                position: position,
+                pivot: pivot,
+                scale: scale,
+                rotation: rotation,
+                opacity: opacity,
+                delay: delay,
+                animation: animation,
+                appearTime: appearTime
+            );
+        }
+        
+        public static void createTextBox(
+            this MovieClipSnapshot snapshot,
+            string id,
+            string text,
+            TextStyle style = null,
+            Color color = null,
+            TextAlign textAlign = TextAlign.center,
+            int? maxLines = null,
+            float? lineHeight = null,
+            string ellipsis = null,
+            Axis direction = Axis.vertical,
+            float  maxWidth = 200,
+            float? maxHeight = null,
+            float? minWidth = 100,
+            float? minHeight = 10,
+            EdgeInsets padding = null,
+            BoxDecoration decoration = null,
+            AppearAnimation animation = AppearAnimation.none,
+            int layer = 0,
+            Offset position = null,
+            Offset pivot = null,
+            Size scale = null,
+            float rotation = 0,
+            float opacity = 1,
+            float delay = 0,
+            float appearTime = MovieClipSnapshot.kDefaultAppearTime) {
+            snapshot.createObject(new MovieClipTextBoxObject(id,
+                    text,
+                    style,
+                    color: color,
+                    textAlign: textAlign,
+                    maxLines: maxLines,
+                    lineHeight: lineHeight,
+                    ellipsis: ellipsis,
+                    direction: direction,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    minWidth: minWidth,
+                    minHeight: minHeight,
+                    padding: padding,
+                    decoration: decoration,
+                    layer: layer
+                ),
+                position: position,
+                pivot: pivot,
+                scale: scale,
+                rotation: rotation,
+                opacity: opacity,
+                delay: delay,
+                animation: animation,
+                appearTime: appearTime
+            );
         }
     }
 }

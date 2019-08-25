@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
@@ -11,11 +13,18 @@ namespace Components {
         T evaluate(float t);
     }
 
-    public abstract class Property<T> : Tween<T>, PropertyData<T>, Property {
-        public readonly float duration;
-        public readonly float startTime;
-        public readonly float endTime;
-        public readonly Curve curve;
+    public abstract class Property<T> : Tween<T>, PropertyData<T>, Property, ICloneable {
+        public float duration => _duration;
+        private float _duration;
+    
+        public float startTime => _startTime;
+        private float _startTime;
+        
+        public float endTime => _endTime;
+        private float _endTime;
+        
+        public Curve curve => _curve;
+        private Curve _curve;
 
         public Property(
             T begin,
@@ -26,10 +35,10 @@ namespace Components {
         ) : base(begin, end) {
             D.assert(startTime < endTime);
             D.assert(startTime >= 0.0f);
-            this.startTime = startTime;
-            this.endTime = endTime;
-            this.curve = curve;
-            duration = endTime - startTime;
+            _startTime = startTime;
+            _endTime = endTime;
+            _curve = curve;
+            _duration = endTime - startTime;
         }
 
         public T evaluate(float t) {
@@ -45,6 +54,18 @@ namespace Components {
 
             return lerp(t);
         }
+        
+        public abstract object Clone();
+
+        public Property<T> copyWith(T begin, T end, float? startTime = null, float? endTime = null, Curve curve = null) {
+            Property<T> ret = Clone() as Property<T>;
+            ret.begin = begin;
+            ret.end = end;
+            ret._startTime = startTime ?? ret.startTime;
+            ret._endTime = endTime ?? ret.endTime;
+            ret._duration = ret._endTime - ret._startTime;
+            return ret;
+        }
     }
 
     public class ColorProperty : Property<Color> {
@@ -53,6 +74,10 @@ namespace Components {
 
         public override Color lerp(float t) {
             return Color.lerp(begin, end, t);
+        }
+
+        public override object Clone() {
+            return new ColorProperty(startTime, endTime, begin, end, curve);
         }
     }
 
@@ -63,6 +88,10 @@ namespace Components {
         public override Size lerp(float t) {
             return Size.lerp(begin, end, t);
         }
+
+        public override object Clone() {
+            return new SizeProperty(startTime, endTime, begin, end, curve);
+        }
     }
 
     public class RectProperty : Property<Rect> {
@@ -71,6 +100,10 @@ namespace Components {
 
         public override Rect lerp(float t) {
             return Rect.lerp(begin, end, t);
+        }
+
+        public override object Clone() {
+            return new RectProperty(startTime, endTime, begin, end, curve);
         }
     }
 
@@ -81,6 +114,10 @@ namespace Components {
 
         public override int lerp(float t) {
             return (begin + (end - begin) * t).round();
+        }
+
+        public override object Clone() {
+            return new IntProperty(startTime, endTime, begin, end, curve);
         }
     }
 
@@ -93,6 +130,10 @@ namespace Components {
             D.assert(end != null);
             return begin + (end - begin) * t;
         }
+
+        public override object Clone() {
+            return new NullableFloatProperty(startTime, endTime, begin, end, curve);
+        }
     }
 
     public class FloatProperty : Property<float> {
@@ -102,6 +143,10 @@ namespace Components {
 
         public override float lerp(float t) {
             return begin + (end - begin) * t;
+        }
+
+        public override object Clone() {
+            return new FloatProperty(startTime, endTime, begin, end, curve);
         }
     }
 
@@ -113,6 +158,10 @@ namespace Components {
         public override int lerp(float t) {
             return (begin + (end - begin) * t).floor();
         }
+
+        public override object Clone() {
+            return new StepProperty(startTime, endTime, begin, end, curve);
+        }
     }
 
     public class OffsetProperty : Property<Offset> {
@@ -123,6 +172,10 @@ namespace Components {
         public override Offset lerp(float t) {
             return begin + (end - begin) * t;
         }
+
+        public override object Clone() {
+            return new OffsetProperty(startTime, endTime, begin, end, curve);
+        }
     }
     
     public class TextStyleProperty : Property<TextStyle> {
@@ -132,6 +185,10 @@ namespace Components {
 
         public override TextStyle lerp(float t) {
             return TextStyle.lerp(begin, end, t);
+        }
+
+        public override object Clone() {
+            return new TextStyleProperty(startTime, endTime, begin, end, curve);
         }
     }
 
@@ -144,6 +201,10 @@ namespace Components {
 
         public override string ToString() {
             return $"{GetType()}(value: {begin})";
+        }
+
+        public override object Clone() {
+            return new ConstantProperty<T>(begin);
         }
     }
 }
