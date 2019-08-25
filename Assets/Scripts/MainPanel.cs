@@ -72,6 +72,29 @@ public class MainPanel : UIWidgetsPanel
                                 )
                             )
                         ),
+                        new Align(
+                            alignment: Alignment.center,
+                            child: new TextList(
+                                texts: new List<string> {
+                                    "Hello",
+                                    "World",
+                                    "(13, 45, 22)",
+                                    "(66, 13, 17)"
+                                }, 
+                                style: new TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold
+                                ),
+                                decoration: new BoxDecoration(
+                                    color: Colors.yellow,
+                                    border: Border.all(
+                                        color: Colors.green
+                                    )
+                                       
+                                )
+                            )
+                        ),
+                        
                         new MovieClip(
                             movieClipData: new MovieClipData(
                                 new List<MovieClipDataFrame>{
