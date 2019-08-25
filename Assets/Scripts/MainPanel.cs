@@ -10,7 +10,7 @@ using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
 using UnityEngine.UIElements;
 using Align = Unity.UIWidgets.widgets.Align;
-using Color = UnityEngine.Color;
+using Color = Unity.UIWidgets.ui.Color;
 using ListView = Unity.UIWidgets.widgets.ListView;
 using TextField = Unity.UIWidgets.material.TextField;
 
@@ -126,30 +126,31 @@ public class MainPanel : UIWidgetsPanel
                                     ),
                                     new MovieClipDataFrame(
                                         2, snapshot => {
-                                                snapshot.createBasicObject(
-                                                    "list",
-                                                    child: new TextList(
-                                                        texts: new List<string> {
-                                                            "(11, 2)",
-                                                            "(22, 4)",
-                                                            "(13, 45, 22)",
-                                                            "(66, 13, 17)"
-                                                        }, 
-                                                        style: new TextStyle(
-                                                            color: Colors.blue,
-                                                            fontWeight: FontWeight.bold
-                                                        ),
-                                                        decoration: new BoxDecoration(
-                                                            color: Colors.yellow,
-                                                            border: Border.all(
-                                                                color: Colors.green
-                                                            )
-                                                               
-                                                        )
+                                            snapshot.createBasicObject(
+                                                "list",
+                                                child: new TextList(
+                                                    texts: new List<string> {
+                                                        "(11, 2)",
+                                                        "(22, 4)",
+                                                        "(13, 45, 22)",
+                                                        "(66, 13, 17)"
+                                                    }, 
+                                                    style: new TextStyle(
+                                                        color: Colors.blue,
+                                                        fontWeight: FontWeight.bold
                                                     ),
-                                                    position: new Offset(400, 200),
-                                                    animation: AppearAnimation.scale
+                                                    decoration: new BoxDecoration(
+                                                        color: Colors.yellow,
+                                                        border: Border.all(
+                                                            color: Colors.green
+                                                        )
+                                                           
+                                                    )
+                                                ),
+                                                position: new Offset(400, 200),
+                                                animation: AppearAnimation.scale
                                             );
+                                            snapshot.animateTo<Color>("textbox", "color", color => Colors.blue);
                                         }
                                     ),
                                     new MovieClipDataFrame(

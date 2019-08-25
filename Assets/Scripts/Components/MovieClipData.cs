@@ -449,6 +449,7 @@ namespace Components {
                     target: target(f),
                     startTime: timestamp + delay,
                     duration: duration ?? _defaultDuration,
+                    useFrom: from != null,
                     from: @from?.Invoke(f),
                     curve: curve);
             }
