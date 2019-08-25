@@ -190,6 +190,8 @@ namespace Components {
             position = obj.position;
             scale = obj.scale;
             rotation = obj.rotation;
+            pivot = obj.pivot;
+            opacity = obj.opacity;
         }
 
         public abstract Widget build(BuildContext context, float t);

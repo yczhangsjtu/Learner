@@ -302,7 +302,7 @@ namespace Components {
             if (obj == null) return false;
             obj.moveTo(position,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 fromPosition: fromPosition,
                 curve: curve);
             return true;
@@ -318,7 +318,7 @@ namespace Components {
             if (obj == null) return false;
             obj.move(offset,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 curve: curve);
             return true;
         }
@@ -328,7 +328,7 @@ namespace Components {
             if (obj == null) return false;
             obj.pivotTo(pivot,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 fromPosition: fromPosition,
                 curve: curve);
             return true;
@@ -339,7 +339,7 @@ namespace Components {
             if (obj == null) return false;
             obj.pivotChangeBy(offset,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 curve: curve);
             return true;
         }
@@ -349,7 +349,7 @@ namespace Components {
             if (obj == null) return false;
             obj.rotateTo(rotation,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 fromRotation: fromRotation,
                 curve: curve);
             return true;
@@ -360,7 +360,7 @@ namespace Components {
             if (obj == null) return false;
             obj.rotateBy(rotation,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 curve: curve);
             return true;
         }
@@ -370,7 +370,7 @@ namespace Components {
             if (obj == null) return false;
             obj.scaleTo(scale,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 fromScale: fromScale,
                 curve: curve);
             return true;
@@ -381,7 +381,7 @@ namespace Components {
             if (obj == null) return false;
             obj.scaleBy(scale,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 curve: curve);
             return true;
         }
@@ -391,7 +391,7 @@ namespace Components {
             if (obj == null) return false;
             obj.opacityTo(opacity,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 fromOpacity: fromOpacity,
                 curve: curve);
             return true;
@@ -402,7 +402,7 @@ namespace Components {
             if (obj == null) return false;
             obj.opacityChangeBy(delta,
                 startTime: timestamp + delay,
-                duration: duration ?? _defaultDuration,
+                duration: duration ?? Mathf.Max(0.1f, _defaultDuration - delay),
                 curve: curve);
             return true;
         }
