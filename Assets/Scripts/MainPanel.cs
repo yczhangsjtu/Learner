@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.engine;
 using Unity.UIWidgets.foundation;
@@ -150,6 +151,13 @@ public class MainPanel : UIWidgetsPanel
                                                 position: new Offset(400, 200),
                                                 animation: AppearAnimation.scale
                                             );
+                                            snapshot.createObject(new MovieClipTypingEffect("typing", new List<string> {
+                                                    "Hello World!\n",
+                                                    "Is this you?!\n",
+                                                    "Okay with that"
+                                                }),
+                                                position: new Offset(800, 200)
+                                            );
                                             snapshot.animateTo<Color>("textbox", "color", color => Colors.blue);
                                         }
                                     ),
@@ -157,6 +165,11 @@ public class MainPanel : UIWidgetsPanel
                                         2, snapshot => {
                                             snapshot.destroyObject("text", animation: DisappearAnimation.overScale);
                                             snapshot.moveObject("rect", new Offset(200, 0));
+                                            snapshot.animateTo<List<float>>("typing", "progress", list => {
+                                                var ret = list.ToList();
+                                                ret[0] = 1;
+                                                return ret;
+                                            });
                                         }
                                     ),
                                     new MovieClipDataFrame(

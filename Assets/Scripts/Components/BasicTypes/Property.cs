@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
+using UnityEngine.Experimental.PlayerLoop;
 
 namespace Learner.Components {
     public interface Property { }
@@ -143,6 +146,30 @@ namespace Learner.Components {
 
         public override object Clone() {
             return new NullableFloatProperty(startTime, endTime, begin, end, curve);
+        }
+    }
+
+    public class FloatListProperty : Property<List<float>> {
+        public FloatListProperty(float startTime, float endTime, List<float> begin, List<float> end,
+            Curve curve = null) : base(
+            startTime: startTime,
+            endTime: endTime, begin: begin, end: end, curve: curve) {
+            D.assert(begin.Count == end.Count);
+        }
+
+        public FloatListProperty(List<float> value) : base(startTime: 0, endTime: 1, begin: value, end: value) { }
+        
+        public override List<float> lerp(float t) {
+            List<float> result = new List<float>(begin.Count);
+            for (int i = 0; i < begin.Count; i++) {
+                result.Append(begin[i] + (end[i] - begin[i]) * t);
+            }
+
+            return result;
+        }
+
+        public override object Clone() {
+            return new FloatListProperty(startTime, endTime, begin.ToList(), end.ToList(), curve);
         }
     }
 

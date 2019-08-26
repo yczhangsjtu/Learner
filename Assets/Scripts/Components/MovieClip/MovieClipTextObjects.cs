@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Unity.UIWidgets.animation;
+using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
@@ -127,9 +131,8 @@ namespace Learner.Components {
                 minWidth: minWidth,
                 minHeight: minHeight,
                 padding: padding,
-                decoration: this.decoration
+                decoration: decoration
             );
-        
         }
         
         public override object Clone() {
@@ -153,6 +156,132 @@ namespace Learner.Components {
         }
 
         public readonly string text;
+        public readonly TextAlign textAlign;
+        public readonly int? maxLines;
+        public readonly float? lineHeight;
+        public readonly string ellipsis;
+        public readonly Axis direction;
+        public readonly EdgeInsets padding;
+        public readonly BoxDecoration decoration;
+        public readonly float  maxWidth;
+        public readonly float? maxHeight;
+        public readonly float? minWidth;
+        public readonly float? minHeight;
+    }
+
+    public class MovieClipTypingEffect : BuilderMovieClipObject {
+        public MovieClipTypingEffect(
+            string id,
+            List<string> texts,
+            TextStyle style = null,
+            Color color = null,
+            TextAlign textAlign = TextAlign.center,
+            int? maxLines = null,
+            float? lineHeight = null,
+            string ellipsis = null,
+            Axis direction = Axis.vertical,
+            float  maxWidth = 200,
+            float? maxHeight = null,
+            float? minWidth = 100,
+            float? minHeight = 10,
+            EdgeInsets padding = null,
+            BoxDecoration decoration = null,
+            int layer = 0)
+            : base(id, layer) {
+            D.assert(!(texts?.isEmpty() ?? true));
+            D.assert(texts.TrueForAll((s => !string.IsNullOrEmpty(s))));
+            this.texts = texts;
+            this.textAlign = textAlign;
+            this.maxLines = maxLines;
+            this.lineHeight = lineHeight;
+            this.ellipsis = ellipsis;
+            this.direction = direction;
+            this.padding = padding;
+            this.decoration = decoration;
+            this.maxWidth = maxWidth;
+            this.maxHeight = maxHeight;
+            this.minWidth = minWidth;
+            this.minHeight = minHeight;
+            initConstantTextStyle(style);
+            initConstantColor(color);
+            initConstantProgresses();
+        }
+        
+       public static readonly TextStyle defaultTextStyle = new TextStyle(
+            color: Colors.black,
+            fontSize: 32,
+            letterSpacing: 10
+        );
+        
+        void initConstantTextStyle(TextStyle style) {
+            parameters["text style"] =
+                new TextStyleProperty(style?.merge(defaultTextStyle) ?? defaultTextStyle);
+        }
+
+        void initConstantColor(Color color) {
+            parameters["color"] = new ColorProperty(color ?? Colors.white);
+        }
+
+        void initConstantProgresses() {
+            parameters["progress"] = new FloatListProperty(Enumerable.Repeat(0.0f, texts.Count).ToList());
+        }
+
+        static string fractionalSubstring(string s, float t) {
+            return s.Substring((s.Length * t).round().clamp(0, s.Length-1));
+        }
+
+        string getText(float t) {
+            List<float> progresses = (parameters["progress"] as FloatListProperty).evaluate(t);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < texts.Count; i++) {
+                builder.Append(fractionalSubstring(texts[i], progresses[i]));
+            }
+
+            return builder.ToString();
+        }
+
+        public override Widget builder(BuildContext context, ParameterGetter getter, float t) {
+            TextStyle _style = (TextStyle) getter("text style", t);
+            Color _color = (Color) getter("color", t);
+            return new TextBox(
+                getText(t),
+                style: _style,
+                color: _color,
+                textAlign: textAlign,
+                maxLines: maxLines,
+                lineHeight: lineHeight,
+                ellipsis: ellipsis,
+                direction: direction,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                minWidth: minWidth,
+                minHeight: minHeight,
+                padding: padding,
+                decoration: decoration
+            );
+        }
+        
+        public override object Clone() {
+            var ret = new MovieClipTypingEffect(
+                id: id,
+                texts: texts,
+                textAlign: textAlign,
+                maxLines: maxLines,
+                lineHeight: lineHeight,
+                ellipsis: ellipsis,
+                direction: direction,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                minWidth: minWidth,
+                minHeight: minHeight,
+                padding: padding,
+                decoration: this.decoration
+            );
+            ret.copyInternalFrom(this);
+            return ret;
+        }
+
+        public readonly List<string> texts;
         public readonly TextAlign textAlign;
         public readonly int? maxLines;
         public readonly float? lineHeight;
