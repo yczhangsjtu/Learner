@@ -5,7 +5,7 @@ using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
-using Components;
+using Learner.Components;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
 using UnityEngine.UIElements;

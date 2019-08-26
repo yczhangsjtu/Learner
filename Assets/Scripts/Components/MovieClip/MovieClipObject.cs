@@ -4,7 +4,7 @@ using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 
-namespace Components {
+namespace Learner.Components {
     public abstract class MovieClipObject : ICloneable {
         public readonly string id;
 

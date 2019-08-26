@@ -3,7 +3,7 @@ using Unity.UIWidgets.animation;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 
-namespace Components {
+namespace Learner.Components {
 
     public class BasicMovieClipObject : MovieClipObject {
         internal BasicMovieClipObject(

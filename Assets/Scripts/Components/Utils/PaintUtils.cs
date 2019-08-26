@@ -4,7 +4,7 @@ using Unity.UIWidgets.material;
 using Unity.UIWidgets.painting;
 using Unity.UIWidgets.ui;
 
-namespace Components {
+namespace Learner.Components {
     public static class PaintUtils {
     }
 }

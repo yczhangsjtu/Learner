@@ -7,7 +7,7 @@ using Unity.UIWidgets.painting;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 
-namespace Components {
+namespace Learner.Components {
 
     public class TextBox : TextList {
 

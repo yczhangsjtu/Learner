@@ -7,7 +7,7 @@ using Unity.UIWidgets.widgets;
 using UnityEngine;
 using Transform = Unity.UIWidgets.widgets.Transform;
 
-namespace Components {
+namespace Learner.Components {
     public interface MovieClipProvider {
         float duration { get; }
 

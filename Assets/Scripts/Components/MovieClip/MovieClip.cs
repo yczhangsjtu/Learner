@@ -6,7 +6,7 @@ using Unity.UIWidgets.widgets;
 /*
  * 
  */
-namespace Components {
+namespace Learner.Components {
     public class MovieClip : StatefulWidget {
         public readonly MovieClipData data;
         public readonly float? height;

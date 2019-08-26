@@ -5,7 +5,7 @@ using Unity.UIWidgets.painting;
 using Unity.UIWidgets.widgets;
 using Color = Unity.UIWidgets.ui.Color;
 
-namespace Components {
+namespace Learner.Components {
     public class MovieClipTextObject : MovieClipObject, MovieClipObjectWithProperty<TextStyle> {
         public MovieClipTextObject(
             string id,

@@ -5,7 +5,7 @@ using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
 
-namespace Components {
+namespace Learner.Components {
     public interface Property { }
 
     public interface PropertyData<T> {
