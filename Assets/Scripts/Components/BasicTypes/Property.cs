@@ -6,7 +6,10 @@ using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
+using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
+using Color = Unity.UIWidgets.ui.Color;
+using Rect = Unity.UIWidgets.ui.Rect;
 
 namespace Learner.Components {
     public interface Property { }
@@ -67,6 +70,7 @@ namespace Learner.Components {
             ret._startTime = startTime ?? ret.startTime;
             ret._endTime = endTime ?? ret.endTime;
             ret._duration = ret._endTime - ret._startTime;
+            ret._curve = curve ?? ret.curve;
             return ret;
         }
     }
@@ -162,9 +166,10 @@ namespace Learner.Components {
         public override List<float> lerp(float t) {
             List<float> result = new List<float>(begin.Count);
             for (int i = 0; i < begin.Count; i++) {
-                result.Append(begin[i] + (end[i] - begin[i]) * t);
+                result.Add(begin[i] + (end[i] - begin[i]) * t);
             }
 
+            Debug.Log($"result.Count = {result.Count}");
             return result;
         }
 

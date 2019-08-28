@@ -51,8 +51,8 @@ namespace Learner.Components {
 
         public override Widget build(BuildContext context) {
             return new SizedBox(
-                width: widget.width,
-                height: widget.height,
+                width: widget.width ?? MediaQuery.of(context).size.width,
+                height: widget.height ?? MediaQuery.of(context).size.height,
                 child: controller != null
                     ? new AnimatedBuilder(
                         animation: animation,

@@ -7,6 +7,7 @@ using Unity.UIWidgets.material;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.painting;
 using Unity.UIWidgets.widgets;
+using UnityEngine;
 using Color = Unity.UIWidgets.ui.Color;
 
 namespace Learner.Components {
@@ -227,11 +228,12 @@ namespace Learner.Components {
         }
 
         static string fractionalSubstring(string s, float t) {
-            return s.Substring((s.Length * t).round().clamp(0, s.Length-1));
+            return s.Substring(0, (s.Length * t).round().clamp(0, s.Length-1));
         }
 
         string getText(float t) {
             List<float> progresses = (parameters["progress"] as FloatListProperty).evaluate(t);
+            D.assert(progresses.Count == texts.Count);
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < texts.Count; i++) {
                 builder.Append(fractionalSubstring(texts[i], progresses[i]));

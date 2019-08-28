@@ -168,6 +168,7 @@ public class MainPanel : UIWidgetsPanel
                                             snapshot.animateTo<List<float>>("typing", "progress", list => {
                                                 var ret = list.ToList();
                                                 ret[0] = 1;
+                                                D.assert(ret.Count == list.Count);
                                                 return ret;
                                             });
                                         }

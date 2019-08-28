@@ -64,10 +64,10 @@ namespace Learner.Components {
                 return false;
             if (property is Property<T> propertyT) {
                 parameters[paramName] = propertyT.copyWith(
-                    startTime: startTime,
-                    endTime: startTime + duration,
                     begin: useFrom ? from : propertyT.evaluate(startTime),
                     end: target,
+                    startTime: startTime,
+                    endTime: startTime + duration,
                     curve: curve
                 );
                 return true;

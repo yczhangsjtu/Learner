@@ -68,7 +68,7 @@ namespace Learner.Components {
             ParagraphStyle paragraphStyle = new ParagraphStyle(
                 textAlign: textAlign,
                 maxLines: maxLines,
-                lineHeight: lineHeight,
+                height: lineHeight,
                 ellipsis: ellipsis
             );
             padding = padding ?? EdgeInsets.all(10.0f);
