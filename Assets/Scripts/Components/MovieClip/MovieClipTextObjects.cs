@@ -23,12 +23,11 @@ namespace Learner.Components {
         
         static readonly TextStyle defaultTextStyle = new TextStyle(
             color: Colors.black,
-            fontSize: 32,
-            letterSpacing: 10
+            fontSize: 32
         );
         
         public void initProperty(TextStyle textStyle) {
-            this.textStyle = new TextStyleProperty(textStyle?.merge(defaultTextStyle) ?? defaultTextStyle);
+            this.textStyle = new TextStyleProperty(defaultTextStyle.merge(textStyle));
         }
 
         public override object Clone() {
@@ -102,13 +101,12 @@ namespace Learner.Components {
         
        public static readonly TextStyle defaultTextStyle = new TextStyle(
             color: Colors.black,
-            fontSize: 32,
-            letterSpacing: 10
+            fontSize: 32
         );
         
         void initConstantTextStyle(TextStyle style) {
             parameters["text style"] =
-                new TextStyleProperty(style?.merge(defaultTextStyle) ?? defaultTextStyle);
+                new TextStyleProperty(defaultTextStyle.merge(style));
         }
 
         void initConstantColor(Color color) {
@@ -210,13 +208,12 @@ namespace Learner.Components {
         
        public static readonly TextStyle defaultTextStyle = new TextStyle(
             color: Colors.black,
-            fontSize: 32,
-            letterSpacing: 10
+            fontSize: 32
         );
         
         void initConstantTextStyle(TextStyle style) {
             parameters["text style"] =
-                new TextStyleProperty(style?.merge(defaultTextStyle) ?? defaultTextStyle);
+                new TextStyleProperty(defaultTextStyle.merge(style));
         }
 
         void initConstantColor(Color color) {
@@ -228,7 +225,7 @@ namespace Learner.Components {
         }
 
         static string fractionalSubstring(string s, float t) {
-            return s.Substring(0, (s.Length * t).round().clamp(0, s.Length-1));
+            return s.Substring(0, (s.Length * t).round().clamp(0, s.Length));
         }
 
         string getText(float t) {

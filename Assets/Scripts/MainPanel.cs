@@ -152,10 +152,17 @@ public class MainPanel : UIWidgetsPanel
                                                 animation: AppearAnimation.scale
                                             );
                                             snapshot.createObject(new MovieClipTypingEffect("typing", new List<string> {
-                                                    "Hello World!\n",
-                                                    "Is this you?!\n",
-                                                    "Okay with that"
-                                                }),
+                                                    "Hello World!",
+                                                    "\nIs this you?!",
+                                                    "\nOkay with that"
+                                                }, style: new TextStyle(
+                                                    fontSize: 16,
+                                                    fontFamily: "Courier",
+                                                    color: Colors.white
+                                                ), color: Colors.cyan,
+                                                    minHeight: 100,
+                                                    minWidth: 100,
+                                                    textAlign: TextAlign.left),
                                                 position: new Offset(800, 200)
                                             );
                                             snapshot.animateTo<Color>("textbox", "color", color => Colors.blue);
@@ -168,14 +175,30 @@ public class MainPanel : UIWidgetsPanel
                                             snapshot.animateTo<List<float>>("typing", "progress", list => {
                                                 var ret = list.ToList();
                                                 ret[0] = 1;
-                                                D.assert(ret.Count == list.Count);
                                                 return ret;
-                                            });
+                                            }, duration: 0.5f);
                                         }
                                     ),
                                     new MovieClipDataFrame(
-                                        20, snapshot => {}
-                                    )
+                                        2, snapshot => {
+                                            
+                                            snapshot.animateTo<List<float>>("typing", "progress", list => {
+                                                var ret = list.ToList();
+                                                ret[2] = 1;
+                                                return ret;
+                                            }, duration: 0.5f);
+                                        }
+                                    ),
+                                    new MovieClipDataFrame(
+                                        20, snapshot => {
+                                            
+                                            snapshot.animateTo<List<float>>("typing", "progress", list => {
+                                                var ret = list.ToList();
+                                                ret[1] = 1;
+                                                return ret;
+                                            }, duration: 0.5f);
+                                        }
+                                    ),
                                 }
                             )
                         )

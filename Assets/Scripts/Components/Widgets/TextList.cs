@@ -84,7 +84,7 @@ namespace Learner.Components {
                 this.texts.Add(paragraph);
                 
                 float height = paragraph.height + padding.top + padding.bottom;
-                if (maxHeight != null) height = height.clamp(minHeight ?? 0.0f, maxHeight.Value);
+                height = height.clamp(minHeight ?? 0.0f, maxHeight ?? float.PositiveInfinity);
                 float width = paragraph.width + padding.left + padding.horizontal;
                 width = width.clamp(minWidth ?? 0.0f, maxWidth);
 
