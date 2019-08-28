@@ -104,7 +104,6 @@ public class MainPanel : UIWidgetsPanel {
                             snapshot.createTextBox("draw_mesh",
                                 "Graphics.DrawMesh()",
                                 style: codeNodeStyle,
-                                minWidth: 320,
                                 maxWidth: 320,
                                 position: new Offset(10, 300),
                                 pivot: new Offset(0, 0.5f),
@@ -129,6 +128,29 @@ public class MainPanel : UIWidgetsPanel {
                                 ret[0] = 1;
                                 return ret;
                             }, duration: 1);
+                        }
+                    ),
+                    new MovieClipDataFrame(
+                        1, snapshot => {
+                            snapshot.moveObjectTo("draw_mesh", new Offset(400, 50));
+                            snapshot.objectPivotTo("draw_mesh", new Offset(0.5f, 0.5f));
+                            snapshot.destroyObject("draw_mesh_do", delay: 2, DisappearAnimation.fadeOut);
+                        }
+                    ),
+                    new MovieClipDataFrame(
+                        2, snapshot => {
+                            snapshot.createObject(new MovieClipTypingEffect("mesh_description",
+                                    new List<string>{"A mesh specifies the shape of a 3D geometry."},
+                                    decoration: new BoxDecoration(),
+                                    maxWidth: 800
+                                ),
+                                position: new Offset(10, 300),
+                                pivot: new Offset(0, 0.5f));
+                            snapshot.animateTo<List<float>>("mesh_description", "progress", progress => {
+                                var ret = progress.ToList();
+                                ret[0] = 1;
+                                return ret;
+                            });
                         }
                     )
                 })
