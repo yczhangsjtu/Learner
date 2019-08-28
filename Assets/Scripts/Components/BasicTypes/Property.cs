@@ -169,7 +169,6 @@ namespace Learner.Components {
                 result.Add(begin[i] + (end[i] - begin[i]) * t);
             }
 
-            Debug.Log($"result.Count = {result.Count}");
             return result;
         }
 
