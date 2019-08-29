@@ -72,13 +72,10 @@ namespace Learner.Components {
             Color color = null,
             TextAlign textAlign = TextAlign.center,
             int? maxLines = null,
-            float? lineHeight = null,
-            string ellipsis = null,
-            Axis direction = Axis.vertical,
-            float  maxWidth = 200,
+            float? maxWidth = null,
             float? maxHeight = null,
-            float? minWidth = 100,
-            float? minHeight = 10,
+            float? minWidth = null,
+            float? minHeight = null,
             EdgeInsets padding = null,
             BoxDecoration decoration = null,
             int layer = 0)
@@ -86,10 +83,7 @@ namespace Learner.Components {
             this.text = text;
             this.textAlign = textAlign;
             this.maxLines = maxLines;
-            this.lineHeight = lineHeight;
-            this.ellipsis = ellipsis;
-            this.direction = direction;
-            this.padding = padding;
+            this.padding = padding ?? EdgeInsets.all(10);
             this.decoration = decoration;
             this.maxWidth = maxWidth;
             this.maxHeight = maxHeight;
@@ -122,9 +116,6 @@ namespace Learner.Components {
                 color: _color,
                 textAlign: textAlign,
                 maxLines: maxLines,
-                lineHeight: lineHeight,
-                ellipsis: ellipsis,
-                direction: direction,
                 maxWidth: maxWidth,
                 maxHeight: maxHeight,
                 minWidth: minWidth,
@@ -140,9 +131,6 @@ namespace Learner.Components {
                 text: text,
                 textAlign: textAlign,
                 maxLines: maxLines,
-                lineHeight: lineHeight,
-                ellipsis: ellipsis,
-                direction: direction,
                 maxWidth: maxWidth,
                 maxHeight: maxHeight,
                 minWidth: minWidth,
@@ -157,12 +145,10 @@ namespace Learner.Components {
         public readonly string text;
         public readonly TextAlign textAlign;
         public readonly int? maxLines;
-        public readonly float? lineHeight;
-        public readonly string ellipsis;
         public readonly Axis direction;
         public readonly EdgeInsets padding;
         public readonly BoxDecoration decoration;
-        public readonly float  maxWidth;
+        public readonly float?  maxWidth;
         public readonly float? maxHeight;
         public readonly float? minWidth;
         public readonly float? minHeight;
@@ -176,13 +162,11 @@ namespace Learner.Components {
             Color color = null,
             TextAlign textAlign = TextAlign.left,
             int? maxLines = null,
-            float? lineHeight = null,
-            string ellipsis = null,
             Axis direction = Axis.vertical,
-            float  maxWidth = 200,
+            float? maxWidth = null,
             float? maxHeight = null,
-            float? minWidth = 100,
-            float? minHeight = 10,
+            float? minWidth = null,
+            float? minHeight = null,
             EdgeInsets padding = null,
             BoxDecoration decoration = null,
             int layer = 0)
@@ -192,10 +176,8 @@ namespace Learner.Components {
             this.texts = texts;
             this.textAlign = textAlign;
             this.maxLines = maxLines;
-            this.lineHeight = lineHeight;
-            this.ellipsis = ellipsis;
             this.direction = direction;
-            this.padding = padding;
+            this.padding = padding ?? EdgeInsets.all(10);
             this.decoration = decoration;
             this.maxWidth = maxWidth;
             this.maxHeight = maxHeight;
@@ -243,9 +225,6 @@ namespace Learner.Components {
                 color: _color,
                 textAlign: textAlign,
                 maxLines: maxLines,
-                lineHeight: lineHeight,
-                ellipsis: ellipsis,
-                direction: direction,
                 maxWidth: maxWidth,
                 maxHeight: maxHeight,
                 minWidth: minWidth,
@@ -261,8 +240,6 @@ namespace Learner.Components {
                 texts: texts,
                 textAlign: textAlign,
                 maxLines: maxLines,
-                lineHeight: lineHeight,
-                ellipsis: ellipsis,
                 direction: direction,
                 maxWidth: maxWidth,
                 maxHeight: maxHeight,
@@ -278,12 +255,10 @@ namespace Learner.Components {
         public readonly List<string> texts;
         public readonly TextAlign textAlign;
         public readonly int? maxLines;
-        public readonly float? lineHeight;
-        public readonly string ellipsis;
         public readonly Axis direction;
         public readonly EdgeInsets padding;
         public readonly BoxDecoration decoration;
-        public readonly float  maxWidth;
+        public readonly float? maxWidth;
         public readonly float? maxHeight;
         public readonly float? minWidth;
         public readonly float? minHeight;
@@ -323,13 +298,10 @@ namespace Learner.Components {
             Color color = null,
             TextAlign textAlign = TextAlign.center,
             int? maxLines = null,
-            float? lineHeight = null,
-            string ellipsis = null,
-            Axis direction = Axis.vertical,
-            float  maxWidth = 200,
+            float? maxWidth = null,
             float? maxHeight = null,
-            float? minWidth = 100,
-            float? minHeight = 10,
+            float? minWidth = null,
+            float? minHeight = null,
             EdgeInsets padding = null,
             BoxDecoration decoration = null,
             AppearAnimation animation = AppearAnimation.none,
@@ -347,14 +319,11 @@ namespace Learner.Components {
                     color: color,
                     textAlign: textAlign,
                     maxLines: maxLines,
-                    lineHeight: lineHeight,
-                    ellipsis: ellipsis,
-                    direction: direction,
                     maxWidth: maxWidth,
                     maxHeight: maxHeight,
                     minWidth: minWidth,
                     minHeight: minHeight,
-                    padding: padding,
+                    padding: padding ?? EdgeInsets.all(10),
                     decoration: decoration,
                     layer: layer
                 ),
@@ -365,6 +334,53 @@ namespace Learner.Components {
                 opacity: opacity,
                 delay: delay,
                 animation: animation,
+                appearTime: appearTime
+            );
+        }
+
+        public static void createTypingEffect(
+            this MovieClipSnapshot snapshot,
+            string id,
+            List<string> texts,
+            TextStyle style = null,
+            Color color = null,
+            TextAlign textAlign = TextAlign.left,
+            int? maxLines = null,
+            float? maxWidth = null,
+            float? maxHeight = null,
+            float? minWidth = null,
+            float? minHeight = null,
+            EdgeInsets padding = null,
+            BoxDecoration decoration = null,
+            int layer = 0,
+            Offset position = null,
+            Offset pivot = null,
+            Size scale = null,
+            float rotation = 0,
+            float opacity = 1,
+            float delay = 0,
+            float appearTime = MovieClipSnapshot.kDefaultAppearTime) {
+            snapshot.createObject(new MovieClipTypingEffect(
+                    id: id,
+                    texts: texts,
+                    style: style,
+                    color: color,
+                    textAlign: textAlign,
+                    maxLines: maxLines,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    minWidth: minWidth,
+                    minHeight: minHeight,
+                    padding: padding ?? EdgeInsets.all(10),
+                    decoration: decoration ?? new BoxDecoration(),
+                    layer: layer
+                ),
+                position: position,
+                pivot: pivot,
+                scale: scale,
+                rotation: rotation,
+                opacity: opacity,
+                delay: delay,
                 appearTime: appearTime
             );
         }

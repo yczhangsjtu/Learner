@@ -55,7 +55,7 @@ public class MainPanel : UIWidgetsPanel {
             return new Scaffold(
                 body: new ListView(
                     children: new List<Widget> {
-                        new ComputeBufferMovieClip()
+                        new HelloMovieClip()
                     }
                 )
             );
@@ -109,17 +109,14 @@ public class MainPanel : UIWidgetsPanel {
                                     pivot: new Offset(0, 0.5f),
                                     decoration: codeNodeDecoration,
                                     animation: AppearAnimation.scale);
-                                snapshot.createObject(
-                                    new MovieClipTypingEffect(
-                                        "draw_mesh_do",
-                                        new List<string> {
-                                            "                                              draws a mesh directly on the screen."
-                                        },
-                                        style: descriptionStyle,
-                                        textAlign: TextAlign.left,
-                                        maxWidth: 800,
-                                        decoration: new BoxDecoration()
-                                    ), 
+                                snapshot.createTypingEffect(
+                                    "draw_mesh_do",
+                                    new List<string> {
+                                        "                                            draws a mesh directly on the screen."
+                                    },
+                                    style: descriptionStyle,
+                                    textAlign: TextAlign.left,
+                                    maxWidth: 800,
                                     position: new Offset(10, 300),
                                     pivot: new Offset(0, 0.5f)
                                 );
@@ -142,12 +139,10 @@ public class MainPanel : UIWidgetsPanel {
                         ),
                         new MovieClipDataFrame(
                             2, snapshot => {
-                                snapshot.createObject(new MovieClipTypingEffect("mesh_description",
-                                        new List<string>{"A mesh specifies the shape of a 3D geometry."},
-                                        decoration: new BoxDecoration(),
-                                        textAlign: TextAlign.left,
-                                        maxWidth: 800
-                                    ),
+                                snapshot.createTypingEffect("mesh_description",
+                                    new List<string>{"A mesh specifies the shape of a 3D geometry."},
+                                    textAlign: TextAlign.left,
+                                    maxWidth: 800,
                                     position: new Offset(10, 300),
                                     pivot: new Offset(0, 0.5f));
                                 snapshot.animateTo<List<float>>("mesh_description", "progress", progress => {
@@ -174,6 +169,31 @@ public class MainPanel : UIWidgetsPanel {
                                 snapshot.createText("text", "Hello World",
                                     position: new Offset(300, 100),
                                     animation: AppearAnimation.fadeIn);
+                                snapshot.createBasicObject(
+                                    "list",
+                                    child: new TextList(
+                                        texts: new List<string> {
+                                            "(11, 2)",
+                                            "(22, 4)",
+                                            "(13, 45, 22)",
+                                            "(66, 13, 17)"
+                                        },
+                                        style: new TextStyle(
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                        direction: Axis.horizontal,
+                                        decoration: new BoxDecoration(
+                                            color: Colors.yellow,
+                                            border: Border.all(
+                                                color: Colors.green
+                                            )
+
+                                        )
+                                    ),
+                                    position: new Offset(400, 200),
+                                    animation: AppearAnimation.scale
+                                );
                             }
                         ),
                         new MovieClipDataFrame(
@@ -225,30 +245,6 @@ public class MainPanel : UIWidgetsPanel {
                         ),
                         new MovieClipDataFrame(
                             2, snapshot => {
-                                snapshot.createBasicObject(
-                                    "list",
-                                    child: new TextList(
-                                        texts: new List<string> {
-                                            "(11, 2)",
-                                            "(22, 4)",
-                                            "(13, 45, 22)",
-                                            "(66, 13, 17)"
-                                        },
-                                        style: new TextStyle(
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                        decoration: new BoxDecoration(
-                                            color: Colors.yellow,
-                                            border: Border.all(
-                                                color: Colors.green
-                                            )
-
-                                        )
-                                    ),
-                                    position: new Offset(400, 200),
-                                    animation: AppearAnimation.scale
-                                );
                                 snapshot.createObject(new MovieClipTypingEffect("typing", new List<string> {
                                             "Hello World!",
                                             "\nIs this you?!",
