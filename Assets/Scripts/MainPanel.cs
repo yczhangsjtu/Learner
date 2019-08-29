@@ -99,61 +99,65 @@ public class MainPanel : UIWidgetsPanel {
                 height: 600,
                 movieClipData: new MovieClipData(
                     new List<MovieClipDataFrame> {
-                    new MovieClipDataFrame(
-                        2, snapshot => {
-                            snapshot.createTextBox("draw_mesh",
-                                "Graphics.DrawMesh()",
-                                style: codeNodeStyle,
-                                maxWidth: 320,
-                                position: new Offset(10, 300),
-                                pivot: new Offset(0, 0.5f),
-                                decoration: codeNodeDecoration,
-                                animation: AppearAnimation.scale);
-                            snapshot.createObject(
-                                new MovieClipTypingEffect(
-                                    "draw_mesh_do",
-                                    new List<string> {
-                                        "                                              draws a mesh directly on the screen."
-                                    },
-                                    style: descriptionStyle,
-                                    textAlign: TextAlign.left,
-                                    maxWidth: 800,
-                                    decoration: new BoxDecoration()
-                                ), 
-                                position: new Offset(10, 300),
-                                pivot: new Offset(0, 0.5f)
-                            );
-                            snapshot.animateTo<List<float>>("draw_mesh_do", "progress", progress => {
-                                var ret = progress.ToList();
-                                ret[0] = 1;
-                                return ret;
-                            }, duration: 1);
-                        }
-                    ),
-                    new MovieClipDataFrame(
-                        1, snapshot => {
-                            snapshot.moveObjectTo("draw_mesh", new Offset(400, 50));
-                            snapshot.objectPivotTo("draw_mesh", new Offset(0.5f, 0.5f));
-                            snapshot.destroyObject("draw_mesh_do", delay: 2, DisappearAnimation.fadeOut);
-                        }
-                    ),
-                    new MovieClipDataFrame(
-                        2, snapshot => {
-                            snapshot.createObject(new MovieClipTypingEffect("mesh_description",
-                                    new List<string>{"A mesh specifies the shape of a 3D geometry."},
-                                    decoration: new BoxDecoration(),
-                                    maxWidth: 800
-                                ),
-                                position: new Offset(10, 300),
-                                pivot: new Offset(0, 0.5f));
-                            snapshot.animateTo<List<float>>("mesh_description", "progress", progress => {
-                                var ret = progress.ToList();
-                                ret[0] = 1;
-                                return ret;
-                            });
-                        }
-                    )
-                })
+                        new MovieClipDataFrame(
+                            2, snapshot => {
+                                snapshot.createTextBox("draw_mesh",
+                                    "Graphics.DrawMesh()",
+                                    style: codeNodeStyle,
+                                    maxWidth: 320,
+                                    position: new Offset(10, 300),
+                                    pivot: new Offset(0, 0.5f),
+                                    decoration: codeNodeDecoration,
+                                    animation: AppearAnimation.scale);
+                                snapshot.createObject(
+                                    new MovieClipTypingEffect(
+                                        "draw_mesh_do",
+                                        new List<string> {
+                                            "                                              draws a mesh directly on the screen."
+                                        },
+                                        style: descriptionStyle,
+                                        textAlign: TextAlign.left,
+                                        maxWidth: 800,
+                                        decoration: new BoxDecoration()
+                                    ), 
+                                    position: new Offset(10, 300),
+                                    pivot: new Offset(0, 0.5f)
+                                );
+                                snapshot.debugObject("draw_mesh_do", "death");
+                                snapshot.setDebugObjectOffset("draw_mesh_do", new Offset(0, 30));
+                                snapshot.animateTo<List<float>>("draw_mesh_do", "progress", progress => {
+                                    var ret = progress.ToList();
+                                    ret[0] = 1;
+                                    return ret;
+                                }, duration: 1);
+                            }
+                        ),
+                        new MovieClipDataFrame(
+                            1, snapshot => {
+                                snapshot.moveObjectTo("draw_mesh", new Offset(400, 50));
+                                snapshot.objectPivotTo("draw_mesh", new Offset(0.5f, 0.5f));
+                                snapshot.destroyObject("draw_mesh_do", delay: 1, DisappearAnimation.fadeOut);
+                            }
+                        ),
+                        new MovieClipDataFrame(
+                            2, snapshot => {
+                                snapshot.createObject(new MovieClipTypingEffect("mesh_description",
+                                        new List<string>{"A mesh specifies the shape of a 3D geometry."},
+                                        decoration: new BoxDecoration(),
+                                        maxWidth: 800
+                                    ),
+                                    position: new Offset(10, 300),
+                                    pivot: new Offset(0, 0.5f));
+                                snapshot.animateTo<List<float>>("mesh_description", "progress", progress => {
+                                    var ret = progress.ToList();
+                                    ret[0] = 1;
+                                    return ret;
+                                });
+                            }
+                        )
+                    },
+                    debugEnabled: true
+                )
             );
         }
     }

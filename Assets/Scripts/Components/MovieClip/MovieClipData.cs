@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
+using Unity.UIWidgets.material;
+using Unity.UIWidgets.painting;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
+using Color = Unity.UIWidgets.ui.Color;
 using Transform = Unity.UIWidgets.widgets.Transform;
 
 namespace Learner.Components {
@@ -19,9 +23,15 @@ namespace Learner.Components {
         private int lastFoundIndex = -1;
         private float lastQueriedTime = -1;
 
-        public MovieClipData(List<MovieClipDataFrame> frames) {
+        public MovieClipData(
+            List<MovieClipDataFrame> frames,
+            bool debugEnabled = false
+        ) {
             if (frames != null && frames.isNotEmpty())
                 instantiateFrames(frames);
+            if (debugEnabled) {
+                enableDebug();
+            }
         }
 
         public float duration {
@@ -75,6 +85,18 @@ namespace Learner.Components {
                 _duration += frame.duration;
             }
         }
+
+        public void enableDebug() {
+            foreach (var snapshot in snapshots) {
+                snapshot.enableDebug();
+            }
+        }
+
+        public void disableDebug() {
+            foreach (var snapshot in snapshots) {
+                snapshot.disableDebug();
+            }
+        }
     }
 
 
@@ -112,6 +134,7 @@ namespace Learner.Components {
 
         private float _timestamp;
         private float _defaultDuration;
+        private bool _debugEnabled;
 
         private List<MovieClipObject> sortedObjects;
 
@@ -244,7 +267,7 @@ namespace Learner.Components {
                 case DisappearAnimation.none:
                     break;
                 case DisappearAnimation.fadeOut:
-                    obj.opacityTo(0, timestamp + delay, disappearTime, 0);
+                    obj.opacityTo(0, timestamp + delay, disappearTime);
                     break;
                 case DisappearAnimation.scale:
                     obj.scaleTo(Size.zero,
@@ -480,6 +503,40 @@ namespace Learner.Components {
             return snapshot;
         }
 
+        public bool debugObject(string id, string propertyName) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.debugProperty(propertyName);
+            return true;
+        }
+
+        public bool setDebugObjectOffset(string id, Offset offset) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.debugOffset = offset;
+            return true;
+        }
+        
+        public bool debugObjectAll(string id) {
+            var obj = getObject(id);
+            if (obj == null) return false;
+            obj.debugAll();
+            return true;
+        }
+
+        public void enableDebug() {
+            _debugEnabled = true;
+        }
+
+        public void disableDebug() {
+            _debugEnabled = false;
+        }
+        
+        private static readonly TextStyle _debugStyle = new TextStyle(
+            color: Colors.red,
+            fontSize: 12
+        );
+
         public Widget build(BuildContext context, float t) {
             if (sortedObjects == null) {
                 sortedObjects = objects.Values.ToList();
@@ -492,8 +549,9 @@ namespace Learner.Components {
                 });
             }
 
-            return new Stack(
-                children: sortedObjects.Select<MovieClipObject, Widget>((obj) => {
+            var children = sortedObjects
+                .Where(obj => obj.deathTime == null || obj.deathTime.Value > t)
+                .Select<MovieClipObject, Widget>((obj) => {
                     Offset position = obj.position.evaluate(t);
                     Offset pivot = obj.pivot.evaluate(t);
                     Size scale = obj.scale.evaluate(t);
@@ -515,7 +573,28 @@ namespace Learner.Components {
                         left: position.dx,
                         top: position.dy
                     );
-                }).ToList()
+            }).ToList();
+
+            if (_debugEnabled) {
+                foreach(var obj in sortedObjects) {
+                    Offset position = obj.position.evaluate(t);
+                    if (obj.deathTime != null && obj.deathTime <= t) {
+                        continue;
+                    }
+                    children.Add(new Positioned(
+                        child: new Text(obj.debugString(t), style: _debugStyle),
+                        left: position.dx + obj.debugOffset.dx,
+                        top: position.dy + obj.debugOffset.dy
+                    ));
+                }
+                children.Add(new Text(
+                    $"Current time is: {t}",
+                    style: _debugStyle
+                ));
+            }
+
+            return new Stack(
+                children: children
             );
         }
     }

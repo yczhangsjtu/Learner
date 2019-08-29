@@ -12,14 +12,16 @@ using Color = Unity.UIWidgets.ui.Color;
 using Rect = Unity.UIWidgets.ui.Rect;
 
 namespace Learner.Components {
-    public interface Property { }
+    public interface Property {
+        string toString(float? t = null);
+    }
 
-    public interface PropertyData<T> {
+    public interface PropertyData<T> : Property {
         T lerp(float t);
         T evaluate(float t);
     }
 
-    public abstract class Property<T> : Tween<T>, PropertyData<T>, Property, ICloneable {
+    public abstract class Property<T> : Tween<T>, PropertyData<T>, ICloneable {
         public float duration => _duration;
         private float _duration;
     
@@ -72,6 +74,15 @@ namespace Learner.Components {
             ret._duration = ret._endTime - ret._startTime;
             ret._curve = curve ?? ret.curve;
             return ret;
+        }
+
+        public override string ToString() {
+            return $"[{startTime} - {endTime}]: {begin} -> {end}{(curve == null ? "" : curve.ToString())}";
+        }
+
+        public string toString(float? t = null) {
+            if (t == null) return ToString();
+            return $"{evaluate(t.Value)} -- {ToString()}";
         }
     }
 

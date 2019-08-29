@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
@@ -27,7 +29,11 @@ namespace Learner.Components {
         public PropertyData<float> rotation;
         public PropertyData<float> opacity;
         public float? deathTime = null;
-        public static Size originalSize = new Size(1, 1);
+
+        public HashSet<string> debugProperties = new HashSet<string>();
+        public Offset debugOffset = Offset.zero;
+        
+        public static readonly Size originalSize = new Size(1, 1);
 
         protected MovieClipObject(
             string id,
@@ -174,7 +180,7 @@ namespace Learner.Components {
         }
 
         public void dieAt(float t) {
-            this.deathTime = t;
+            deathTime = t;
         }
 
         public abstract object Clone();
@@ -187,9 +193,48 @@ namespace Learner.Components {
             rotation = obj.rotation;
             pivot = obj.pivot;
             opacity = obj.opacity;
+            deathTime = obj.deathTime;
+            debugOffset = obj.debugOffset;
+            debugProperties = obj.debugProperties;
         }
 
         public abstract Widget build(BuildContext context, float t);
+
+        public virtual void debugAll() {
+            debugProperty("index");
+            debugProperty("layer");
+            debugProperty("position");
+            debugProperty("pivot");
+            debugProperty("scale");
+            debugProperty("rotation");
+            debugProperty("opacity");
+        }
+        
+        public void debugProperty(string propertyName) {
+            debugProperties.Add(propertyName);
+        }
+
+        protected bool propertyDebugged(string propertyName) {
+            return debugProperties.Contains(propertyName);
+        }
+
+        public virtual void assembleDebugString(StringBuilder builder, float? t = null) {
+            builder.AppendLine($"{GetType()}");
+            if(propertyDebugged("index")) builder.AppendLine($"index: {_index}");
+            if(propertyDebugged("layer")) builder.AppendLine($"layer: {_layer}");
+            if(propertyDebugged("position")) builder.AppendLine($"position: {position.toString(t)}");
+            if(propertyDebugged("pivot")) builder.AppendLine($"pivot: {pivot.toString(t)}");
+            if(propertyDebugged("scale")) builder.AppendLine($"scale: {scale.toString(t)}");
+            if(propertyDebugged("rotation")) builder.AppendLine($"rotation: {rotation.toString(t)}");
+            if(propertyDebugged("opacity")) builder.AppendLine($"opacity: {opacity.toString(t)}");
+            if(propertyDebugged("death")) builder.AppendLine($"death: {(deathTime == null ? "Not" : deathTime.ToString())}");
+        }
+
+        public string debugString(float? t = null) {
+            StringBuilder builder = new StringBuilder();
+            assembleDebugString(builder, t);
+            return builder.ToString();
+        }
     }
     
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
@@ -23,6 +24,18 @@ namespace Learner.Components {
 
         public override Widget build(BuildContext context, float t) {
             return child;
+        }
+
+        public override void debugAll() {
+            base.debugAll();
+            debugProperty("child");
+        }
+
+        public override void assembleDebugString(StringBuilder builder, float? t = null) {
+            base.assembleDebugString(builder, t);
+            if (propertyDebugged("child")) {
+                builder.AppendLine($"Child: {child?.toStringShort() ?? "Null"}");
+            }
         }
     }
 
@@ -77,6 +90,15 @@ namespace Learner.Components {
 
         public override Widget build(BuildContext context, float t) {
             return builder(context, getParameter, t);
+        }
+
+        public override void assembleDebugString(StringBuilder builder, float? t = null) {
+            base.assembleDebugString(builder, t);
+            foreach (var entry in parameters) {
+                if (propertyDebugged(entry.Key)) {
+                    builder.AppendLine($"{entry.Key}: {entry.Value.toString(t)}");
+                }
+            }
         }
     }
 
