@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity.UIWidgets.animation;
+using Unity.UIWidgets.foundation;
+using Unity.UIWidgets.painting;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 
@@ -105,6 +108,28 @@ namespace Learner.Components {
     public interface MovieClipObjectWithProperty<T> {
         T getProperty(float t);
         void animateTo(T target, float startTime, float duration, T from, Curve curve);
+    }
+    
+    public abstract class MovieClipFloatListObject : BuilderMovieClipObject {
+        public MovieClipFloatListObject(
+            string id,
+            int size,
+            int layer = 0)
+            : base(id, layer) {
+            D.assert(size > 0);
+            initConstantProgresses(size);
+        }
+        
+        protected void initConstantProgresses(int size) {
+            parameters["progress"] = new FloatListProperty(Enumerable.Repeat(0.0f, size).ToList());
+        }
+
+        public abstract Widget buildWithProgress(BuildContext context, List<float> progress, ParameterGetter getter, float t);
+
+        public override Widget builder(BuildContext context, ParameterGetter getter, float t) {
+            List<float> progresses = (parameters["progress"] as FloatListProperty).evaluate(t);
+            return buildWithProgress(context, progresses, getter, t);
+        }
     }
 
     public static partial class MovieClipUtils {

@@ -168,7 +168,7 @@ namespace Learner.Components {
         public readonly float? minHeight;
     }
 
-    public class MovieClipTypingEffect : BuilderMovieClipObject {
+    public class MovieClipTypingEffect : MovieClipFloatListObject {
         public MovieClipTypingEffect(
             string id,
             List<string> texts,
@@ -186,7 +186,7 @@ namespace Learner.Components {
             EdgeInsets padding = null,
             BoxDecoration decoration = null,
             int layer = 0)
-            : base(id, layer) {
+            : base(id, texts.Count, layer) {
             D.assert(!(texts?.isEmpty() ?? true));
             D.assert(texts.TrueForAll((s => !string.IsNullOrEmpty(s))));
             this.texts = texts;
@@ -203,7 +203,7 @@ namespace Learner.Components {
             this.minHeight = minHeight;
             initConstantTextStyle(style);
             initConstantColor(color);
-            initConstantProgresses();
+            initConstantProgresses(texts.Count);
         }
         
        public static readonly TextStyle defaultTextStyle = new TextStyle(
@@ -220,16 +220,11 @@ namespace Learner.Components {
             parameters["color"] = new ColorProperty(color ?? Colors.white);
         }
 
-        void initConstantProgresses() {
-            parameters["progress"] = new FloatListProperty(Enumerable.Repeat(0.0f, texts.Count).ToList());
-        }
-
         static string fractionalSubstring(string s, float t) {
             return s.Substring(0, (s.Length * t).round().clamp(0, s.Length));
         }
 
-        string getText(float t) {
-            List<float> progresses = (parameters["progress"] as FloatListProperty).evaluate(t);
+        string getText(List<float> progresses) {
             D.assert(progresses.Count == texts.Count);
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < texts.Count; i++) {
@@ -239,11 +234,11 @@ namespace Learner.Components {
             return builder.ToString();
         }
 
-        public override Widget builder(BuildContext context, ParameterGetter getter, float t) {
+        public override Widget buildWithProgress(BuildContext context, List<float> progress, ParameterGetter getter, float t) {
             TextStyle _style = (TextStyle) getter("text style", t);
             Color _color = (Color) getter("color", t);
             return new TextBox(
-                getText(t),
+                getText(progress),
                 style: _style,
                 color: _color,
                 textAlign: textAlign,
