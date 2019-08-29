@@ -136,7 +136,8 @@ public class MainPanel : UIWidgetsPanel {
                             1, snapshot => {
                                 snapshot.moveObjectTo("draw_mesh", new Offset(400, 50));
                                 snapshot.objectPivotTo("draw_mesh", new Offset(0.5f, 0.5f));
-                                snapshot.destroyObject("draw_mesh_do", delay: 1, DisappearAnimation.fadeOut);
+                                snapshot.moveObject("draw_mesh_do", new Offset(0, -100));
+                                snapshot.destroyObject("draw_mesh_do", animation: DisappearAnimation.fadeOut);
                             }
                         ),
                         new MovieClipDataFrame(
@@ -144,6 +145,7 @@ public class MainPanel : UIWidgetsPanel {
                                 snapshot.createObject(new MovieClipTypingEffect("mesh_description",
                                         new List<string>{"A mesh specifies the shape of a 3D geometry."},
                                         decoration: new BoxDecoration(),
+                                        textAlign: TextAlign.left,
                                         maxWidth: 800
                                     ),
                                     position: new Offset(10, 300),

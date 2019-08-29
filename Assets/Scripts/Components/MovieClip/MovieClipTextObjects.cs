@@ -174,7 +174,7 @@ namespace Learner.Components {
             List<string> texts,
             TextStyle style = null,
             Color color = null,
-            TextAlign textAlign = TextAlign.center,
+            TextAlign textAlign = TextAlign.left,
             int? maxLines = null,
             float? lineHeight = null,
             string ellipsis = null,
