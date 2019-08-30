@@ -55,7 +55,7 @@ public class MainPanel : UIWidgetsPanel {
             return new Scaffold(
                 body: new ListView(
                     children: new List<Widget> {
-                        new HelloMovieClip()
+                        new ComputeBufferMovieClip()
                     }
                 )
             );
@@ -97,6 +97,7 @@ public class MainPanel : UIWidgetsPanel {
             return new MovieClip(
                 width: 800,
                 height: 600,
+                startFrom: 5,
                 movieClipData: new MovieClipData(
                     new List<MovieClipDataFrame> {
                         new MovieClipDataFrame(
@@ -106,27 +107,17 @@ public class MainPanel : UIWidgetsPanel {
                                     style: codeNodeStyle,
                                     maxWidth: 320,
                                     position: new Offset(10, 300),
-                                    pivot: new Offset(0, 0.5f),
                                     decoration: codeNodeDecoration,
                                     animation: AppearAnimation.scale);
                                 snapshot.createTypingEffect(
                                     "draw_mesh_do",
-                                    new List<string> {
-                                        "                                            draws a mesh directly on the screen."
-                                    },
+                                    "draws a mesh directly on the screen.",
                                     style: descriptionStyle,
-                                    textAlign: TextAlign.left,
-                                    maxWidth: 800,
-                                    position: new Offset(10, 300),
-                                    pivot: new Offset(0, 0.5f)
+                                    position: new Offset(300, 300)
                                 );
                                 snapshot.debugObject("draw_mesh_do", "death");
                                 snapshot.setDebugObjectOffset("draw_mesh_do", new Offset(0, 30));
-                                snapshot.animateTo<List<float>>("draw_mesh_do", "progress", progress => {
-                                    var ret = progress.ToList();
-                                    ret[0] = 1;
-                                    return ret;
-                                }, duration: 1);
+                                snapshot.animateTyping("draw_mesh_do", duration: 1);
                             }
                         ),
                         new MovieClipDataFrame(
@@ -140,18 +131,34 @@ public class MainPanel : UIWidgetsPanel {
                         new MovieClipDataFrame(
                             2, snapshot => {
                                 snapshot.createTypingEffect("mesh_description",
-                                    new List<string>{"A mesh specifies the shape of a 3D geometry."},
-                                    textAlign: TextAlign.left,
-                                    maxWidth: 800,
+                                    "A mesh specifies the shape of a 3D geometry.",
                                     position: new Offset(10, 300),
                                     pivot: new Offset(0, 0.5f));
-                                snapshot.animateTo<List<float>>("mesh_description", "progress", progress => {
-                                    var ret = progress.ToList();
-                                    ret[0] = 1;
-                                    return ret;
-                                });
+                                snapshot.animateTyping("mesh_description");
                             }
-                        )
+                        ),
+                        new MovieClipDataFrame(
+                            2, snapshot => {
+                                snapshot.destroyObject("mesh_description", animation: DisappearAnimation.scale, disappearTime: 1);
+                                snapshot.createTypingEffect("mesh_contains", "A mesh contains:", style: descriptionStyle,
+                                    position: new Offset(10, 100));
+                                snapshot.animateTyping("mesh_contains", duration: 1);
+                            }
+                        ),
+                        new MovieClipDataFrame(
+                            2, snapshot => {
+                                snapshot.createBasicObjectWithTitle("vertex_list", "Vertices", new TextList(
+                                        new List<string> {"(0, 0)", "(1, 0)", "(1, 1)", "(0, 1)", "(0.5, 0.5)"},
+                                        style: codeNodeStyle,
+                                        decoration: new BoxDecoration(
+                                            color: Colors.cyan,
+                                            border: Border.all(color: Colors.lightBlue, width: 2)
+                                        )
+                                    ),
+                                    position: new Offset(500, 400),
+                                    animation: AppearAnimation.fromTop);
+                            }
+                        ),
                     },
                     debugEnabled: true
                 )

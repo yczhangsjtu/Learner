@@ -157,5 +157,76 @@ namespace Learner.Components {
                 appearTime: appearTime
             );
         }
+
+        public static void createBasicObjectWithTitle(
+            this MovieClipSnapshot snapshot,
+            string id,
+            string title,
+            Widget child,
+            float titleDistance = 25,
+            Alignment alignment = null,
+            TextStyle style = null,
+            AppearAnimation animation = AppearAnimation.none,
+            int layer = 0,
+            Offset position = null,
+            Offset pivot = null,
+            Size scale = null,
+            float rotation = 0,
+            float opacity = 1,
+            float delay = 0,
+            float appearTime = MovieClipSnapshot.kDefaultAppearTime) {
+            snapshot.createBasicObject(
+                id: id,
+                child: new Stack(children: new List<Widget> {
+                    new Padding(
+                        child: child,
+                        padding: EdgeInsets.all(titleDistance)
+                    ),
+                    Positioned.fill(
+                        new Align(
+                            child: new Text(title, style: style ?? new TextStyle(fontWeight: FontWeight.bold)),
+                            alignment: alignment ?? Alignment.topCenter
+                        )
+                    )
+                }),
+                animation: animation,
+                layer: layer,
+                position: position,
+                pivot: pivot,
+                scale: scale,
+                rotation: rotation,
+                opacity: opacity,
+                delay: delay,
+                appearTime: appearTime
+            );
+        }
+
+        public static bool animateFloatListObject(
+            this MovieClipSnapshot snapshot,
+            string id,
+            PropertyModifier<List<float>> modifier,
+            float delay = 0,
+            float? duration = null,
+            PropertyModifier<List<float>> from = null,
+            Curve curve = null
+        ) {
+            return snapshot.animateTo<List<float>>(
+                id,
+                paramName: "progress",
+                target: progress => {
+                    var ret = progress.ToList();
+                    modifier(ret);
+                    return ret;
+                },
+                delay: delay,
+                duration: duration,
+                from: from != null ? (PropertyProvider<List<float>>) (progress => {
+                    var ret = progress.ToList();
+                    from(ret);
+                    return ret;
+                }) : null,
+                curve: curve
+            );
+        }
     }
 }

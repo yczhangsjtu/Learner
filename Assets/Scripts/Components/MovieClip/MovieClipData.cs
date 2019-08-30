@@ -12,6 +12,10 @@ using Color = Unity.UIWidgets.ui.Color;
 using Transform = Unity.UIWidgets.widgets.Transform;
 
 namespace Learner.Components {
+
+    public delegate T PropertyProvider<T>(T value);
+    public delegate void PropertyModifier<T>(T value);
+        
     public interface MovieClipProvider {
         float duration { get; }
 
@@ -429,8 +433,6 @@ namespace Learner.Components {
                 curve: curve);
             return true;
         }
-
-        public delegate T PropertyProvider<T>(T value);
 
         public bool animateTo<T>(
             string id,

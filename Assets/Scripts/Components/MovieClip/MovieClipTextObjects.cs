@@ -384,5 +384,69 @@ namespace Learner.Components {
                 appearTime: appearTime
             );
         }
+
+        public static void createTypingEffect(
+            this MovieClipSnapshot snapshot,
+            string id,
+            string text,
+            TextStyle style = null,
+            Color color = null,
+            TextAlign textAlign = TextAlign.left,
+            int? maxLines = null,
+            float? maxWidth = null,
+            float? maxHeight = null,
+            float? minWidth = null,
+            float? minHeight = null,
+            EdgeInsets padding = null,
+            BoxDecoration decoration = null,
+            int layer = 0,
+            Offset position = null,
+            Offset pivot = null,
+            Size scale = null,
+            float rotation = 0,
+            float opacity = 1,
+            float delay = 0,
+            float appearTime = MovieClipSnapshot.kDefaultAppearTime) {
+            snapshot.createTypingEffect(
+                id: id,
+                texts: new List<string> {text},
+                style: style,
+                color: color,
+                textAlign: textAlign,
+                maxLines: maxLines,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                minWidth: minWidth,
+                minHeight: minHeight,
+                padding: padding ?? EdgeInsets.all(10),
+                decoration: decoration ?? new BoxDecoration(),
+                layer: layer,
+                position: position,
+                pivot: pivot ?? new Offset(0, 0.5f),
+                scale: scale,
+                rotation: rotation,
+                opacity: opacity,
+                delay: delay,
+                appearTime: appearTime
+            );
+        }
+        
+        public static bool animateTyping(
+            this MovieClipSnapshot snapshot,
+            string id,
+            int index = 0,
+            float target = 1,
+            float delay = 0,
+            float? duration = null,
+            Curve curve = null
+        ) {
+            return snapshot.animateFloatListObject(
+                id,
+                progress => { progress[index] = target; },
+                delay: delay,
+                duration: duration,
+                curve: curve
+            );
+        }
     }
 }

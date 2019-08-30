@@ -11,16 +11,19 @@ namespace Learner.Components {
         public readonly MovieClipData data;
         public readonly float? height;
         public readonly float? width;
+        public readonly float startFrom;
 
         public MovieClip(
             Key key = null,
             MovieClipData movieClipData = null,
+            float startFrom = 0,
             float? width = null,
             float? height = null
         ) : base(key) {
             this.width = width;
             this.height = height;
             data = movieClipData;
+            this.startFrom = startFrom;
         }
 
         public override State createState() {
@@ -39,9 +42,8 @@ namespace Learner.Components {
                     duration: TimeSpan.FromSeconds(widget.data.duration),
                     vsync: this);
                 animation = new FloatTween(begin: 0, end: widget.data.duration).animate(controller);
+                controller.forward(from: widget.startFrom / widget.data.duration);
             }
-
-            controller.forward();
         }
 
         public override void dispose() {
