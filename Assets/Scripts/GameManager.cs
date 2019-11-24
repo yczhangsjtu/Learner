@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
         studyCard.SetActive(true);
         pageControl.SetActive(false);
 
-        currentPage = selectedStudyCard.studyTest.startNode;
+        currentPage = selectedStudyCard.startNode;
         state = State.testing;
         scoreInt = 0;
         UpdateContent();
@@ -120,17 +120,17 @@ public class GameManager : MonoBehaviour
 
     void UpdateContent() {
         if(state == State.reviewing) {
-            image.sprite = selectedStudyCard.studyMaterial.pages[currentPage].materialImage;
-            content.text = selectedStudyCard.studyMaterial.pages[currentPage].materialText;
+            image.sprite = selectedStudyCard.pages[currentPage].materialImage;
+            content.text = selectedStudyCard.pages[currentPage].materialText;
         } else if(state == State.testing) {
-            image.sprite = selectedStudyCard.studyTest.nodes[currentPage].page.hintMaterial.materialImage;
-            content.text = selectedStudyCard.studyTest.nodes[currentPage].page.hintMaterial.materialText;
+            image.sprite = selectedStudyCard.nodes[currentPage].page.hintMaterial.materialImage;
+            content.text = selectedStudyCard.nodes[currentPage].page.hintMaterial.materialText;
             scoreValue.text = $"{scoreInt}";
         }
     }
 
     public void NextPage() {
-        if(currentPage < selectedStudyCard.studyMaterial.pages.Count - 1) {
+        if(currentPage < selectedStudyCard.pages.Count - 1) {
             currentPage++;
             UpdateContent();
         }
@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void FinishAnswer() {
-        var currentNode = selectedStudyCard.studyTest.nodes[currentPage];
+        var currentNode = selectedStudyCard.nodes[currentPage];
         if(currentNode.page.check(answer.text)) {
             scoreInt += currentNode.score;
             currentPage = currentNode.nextPageCorrect;
@@ -152,7 +152,7 @@ public class GameManager : MonoBehaviour
             currentPage = currentNode.nextPageWrong;
         }
         answer.text = "";
-        if(currentPage == selectedStudyCard.studyTest.endNode) {
+        if(currentPage == selectedStudyCard.endNode) {
             scoreBoard.SetActive(true);
             studyCard.SetActive(false);
             scoreBoardValue.text = $"{scoreInt}";

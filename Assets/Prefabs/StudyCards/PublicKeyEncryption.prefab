@@ -44,7 +44,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topic: Public Key Encryption
-  studyMaterial: {fileID: 8680539704612794072, guid: 296f20439a2ac43e58b9368d3eb6916f,
-    type: 3}
-  studyTest: {fileID: 7587745192666025494, guid: 03b93f1ef2ce741c19569ca58744aecb,
-    type: 3}
+  pages:
+  - {fileID: 7209064810627333985, guid: ca5c2f1f07bea439ab4c089233f628ed, type: 3}
+  - {fileID: 8094025702121231316, guid: 8bc974c25bc3841a981899f0685ff6cb, type: 3}
+  nodes:
+  - page: {fileID: 5343345024627677115, guid: fcf5edf5d95624f7f93b728059e7e6fc, type: 3}
+    nextPageCorrect: 1
+    nextPageWrong: 1
+    score: 1
+  - page: {fileID: 84650827659960808, guid: 2d6c4065f667448bdb6fa4fe5b268869, type: 3}
+    nextPageCorrect: 2
+    nextPageWrong: 2
+    score: 1
+  startNode: 0
+  endNode: 2
