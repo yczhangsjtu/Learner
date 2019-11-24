@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour
     public TMPro.TMP_InputField answer;
     public GameObject score;
     public TMPro.TextMeshProUGUI scoreValue;
+    public GameObject scoreBoard;
+    public TMPro.TextMeshProUGUI scoreBoardValue;
 
     State state;
     StudyCardObject selectedStudyCard;
@@ -66,7 +68,11 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(state == State.scoreboard) {
+            if(Input.GetMouseButton(0)) {
+                BackToMenu();
+            }
+        }
     }
 
     public void onDropDownValueChanged(int index) {
@@ -80,6 +86,7 @@ public class GameManager : MonoBehaviour
         menu.SetActive(false);
         answer.gameObject.SetActive(false);
         score.SetActive(false);
+        scoreBoard.SetActive(false);
         studyCard.SetActive(true);
         pageControl.SetActive(true);
 
@@ -92,6 +99,7 @@ public class GameManager : MonoBehaviour
         menu.SetActive(false);
         answer.gameObject.SetActive(true);
         score.SetActive(true);
+        scoreBoard.SetActive(false);
         studyCard.SetActive(true);
         pageControl.SetActive(false);
 
@@ -105,6 +113,7 @@ public class GameManager : MonoBehaviour
         menu.SetActive(true);
         answer.gameObject.SetActive(false);
         score.SetActive(false);
+        scoreBoard.SetActive(false);
         studyCard.SetActive(false);
         state = State.menu;
     }
@@ -144,7 +153,10 @@ public class GameManager : MonoBehaviour
         }
         answer.text = "";
         if(currentPage == selectedStudyCard.studyTest.endNode) {
-            BackToMenu();
+            scoreBoard.SetActive(true);
+            studyCard.SetActive(false);
+            scoreBoardValue.text = $"{scoreInt}";
+            state = State.scoreboard;
         } else {
             UpdateContent();
         }
