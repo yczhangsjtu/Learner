@@ -43,8 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 810d1f0860189408daa7a438ffa88914, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hintMaterial: {fileID: 5768466505082970431, guid: e0e1b6eaa19aa4e1dbd68465ea62ea56,
-    type: 3}
+  materialImage: {fileID: 0}
+  materialText: Where does Bob get his session key?
   keywords:
   - Alice
   inOrder: 0

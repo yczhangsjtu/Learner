@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StudyTestPageObject : MonoBehaviour
-{
-    public StudyMaterialPageObject hintMaterial;
+public class StudyTestPageObject : MonoBehaviour {
+
+    public Sprite materialImage;
+    [Multiline]
+    public string materialText;
     public List<string> keywords;
     public bool inOrder = false;
     public bool noRedundant = false;

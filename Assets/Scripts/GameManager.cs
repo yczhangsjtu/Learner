@@ -96,6 +96,9 @@ public class GameManager : MonoBehaviour
     }
 
     public void StartTesting() {
+        if(selectedStudyCard.nodes.Count == 0) {
+            return;
+        }
         menu.SetActive(false);
         answer.gameObject.SetActive(true);
         score.SetActive(true);
@@ -123,8 +126,8 @@ public class GameManager : MonoBehaviour
             image.sprite = selectedStudyCard.pages[currentPage].materialImage;
             content.text = selectedStudyCard.pages[currentPage].materialText;
         } else if(state == State.testing) {
-            image.sprite = selectedStudyCard.nodes[currentPage].page.hintMaterial.materialImage;
-            content.text = selectedStudyCard.nodes[currentPage].page.hintMaterial.materialText;
+            image.sprite = selectedStudyCard.nodes[currentPage].page.materialImage;
+            content.text = selectedStudyCard.nodes[currentPage].page.materialText;
             scoreValue.text = $"{scoreInt}";
         }
     }

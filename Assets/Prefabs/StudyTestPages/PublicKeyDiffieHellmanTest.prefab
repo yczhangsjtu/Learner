@@ -43,8 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 810d1f0860189408daa7a438ffa88914, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hintMaterial: {fileID: 8495883021853540741, guid: 2326dd669978b4de9baa9f2d7360a47a,
-    type: 3}
+  materialImage: {fileID: 0}
+  materialText: What is the final session key?
   keywords:
   - g^xy
   inOrder: 0

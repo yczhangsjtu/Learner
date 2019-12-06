@@ -43,8 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 810d1f0860189408daa7a438ffa88914, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hintMaterial: {fileID: 2696135729309173495, guid: 141ebfd6b2de84b959846f2f83e449b4,
-    type: 3}
+  materialImage: {fileID: 0}
+  materialText: What is KDC?
   keywords:
   - Key
   - Distribution
