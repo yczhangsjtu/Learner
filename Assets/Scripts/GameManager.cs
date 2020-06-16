@@ -22,8 +22,14 @@ public class GameManager : MonoBehaviour
 
     [Header("Studying")]
     public GameObject studyCard;
+    public GameObject imageScrollView;
+    public GameObject wideImageScrollView;
     public Image image;
+    public Image wideImage;
+    public GameObject contentScrollView;
+    public GameObject wideContentScrollView;
     public TMPro.TextMeshProUGUI content;
+    public TMPro.TextMeshProUGUI wideContent;
 
     [Header("Reviewing")]
     public GameObject pageControl;
@@ -123,11 +129,47 @@ public class GameManager : MonoBehaviour
 
     void UpdateContent() {
         if(state == State.reviewing) {
-            image.sprite = selectedStudyCard.pages[currentPage].materialImage;
-            content.text = selectedStudyCard.pages[currentPage].materialText;
+            if(string.IsNullOrWhiteSpace(selectedStudyCard.pages[currentPage].materialText)) {
+                wideImage.sprite = selectedStudyCard.pages[currentPage].materialImage;
+                wideImageScrollView.SetActive(true);
+                imageScrollView.SetActive(false);
+                contentScrollView.SetActive(false);
+                wideContentScrollView.SetActive(false);
+            } else if(selectedStudyCard.pages[currentPage].materialImage == null) {
+                wideContent.text = selectedStudyCard.pages[currentPage].materialText;
+                wideImageScrollView.SetActive(false);
+                imageScrollView.SetActive(false);
+                contentScrollView.SetActive(false);
+                wideContentScrollView.SetActive(true);
+            } else {
+                image.sprite = selectedStudyCard.pages[currentPage].materialImage;
+                content.text = selectedStudyCard.pages[currentPage].materialText;
+                wideImageScrollView.SetActive(false);
+                imageScrollView.SetActive(true);
+                contentScrollView.SetActive(true);
+                wideContentScrollView.SetActive(false);
+            }
         } else if(state == State.testing) {
-            image.sprite = selectedStudyCard.nodes[currentPage].page.materialImage;
-            content.text = selectedStudyCard.nodes[currentPage].page.materialText;
+            if(string.IsNullOrWhiteSpace(selectedStudyCard.nodes[currentPage].page.materialText)) {
+                wideImage.sprite = selectedStudyCard.nodes[currentPage].page.materialImage;
+                wideImageScrollView.SetActive(true);
+                imageScrollView.SetActive(false);
+                contentScrollView.SetActive(false);
+                wideContentScrollView.SetActive(false);
+            } else if(selectedStudyCard.nodes[currentPage].page.materialImage == null) {
+                wideContent.text = selectedStudyCard.nodes[currentPage].page.materialText;
+                wideImageScrollView.SetActive(false);
+                imageScrollView.SetActive(false);
+                contentScrollView.SetActive(false);
+                wideContentScrollView.SetActive(true);
+            } else {
+                image.sprite = selectedStudyCard.nodes[currentPage].page.materialImage;
+                content.text = selectedStudyCard.nodes[currentPage].page.materialText;
+                wideImageScrollView.SetActive(false);
+                imageScrollView.SetActive(true);
+                contentScrollView.SetActive(true);
+                wideContentScrollView.SetActive(false);
+            }
             scoreValue.text = $"{scoreInt}";
         }
     }
